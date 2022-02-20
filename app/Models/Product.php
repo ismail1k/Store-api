@@ -13,11 +13,10 @@ class Product extends Model implements PurchaseableInterface
 
     protected $table = 'products';
     protected $fillable = [
-        'id',
         'name',
+        'short_description',
         'description',
         'tags',
-        'media_id',
         'category_id',
         'inventory_id',
         'price',
@@ -28,4 +27,24 @@ class Product extends Model implements PurchaseableInterface
         'created_at',
         'updated_at',
     ];
+    protected $hidden = [
+        'category_id',
+        'inventory_id',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
+    ];
+
+    public function media(){
+        return $this->hasMany(Media::class);
+    }
+
+    public function inventory(){
+        return $this->belongsTo(Inventory::class);
+    }
+
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
 }

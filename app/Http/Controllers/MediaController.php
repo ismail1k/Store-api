@@ -23,7 +23,7 @@ class MediaController extends Controller
             $media = Media::whereId($media_id)->get();
             $response = [
                 'id' => $media[0]->id,
-                'for' => $media[0]->for,
+                'product_id' => $media[0]->product_id,
                 'primary' => $media[0]->primary,
                 'url' => Storage::url($media[0]->path),
             ];
@@ -52,14 +52,14 @@ class MediaController extends Controller
                 $acceptable_format = ['video', 'image'];
                 if(in_array(strstr($request['attachment']->getClientmimeType(), '/', true), $acceptable_format)){                
                     $media_id = [];
-                    $for = lib::filter($request['for']);
+                    $product_id = lib::filter($request['product_id']);
                     $primary = $request['primary'] == 1 ? true : false;
                     $media = $request->file('attachment');
                     $file_name = strtolower(str_replace(':', '-', lib::time().' '.rand(000000, 111599)).'.'.$media->getClientOriginalExtension());
                     $temp = $media->move(storage_path('app\\public'), $file_name);
                     $media_id = Media::create([
                         'path' => $file_name,
-                        'for' => $for,
+                        'product_id' => $product_id,
                         'primary' => $primary,
                         'created_by' => Auth::user()->id,
                         'updated_by' => Auth::user()->id,

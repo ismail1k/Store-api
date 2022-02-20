@@ -30,26 +30,24 @@ class InventoryController extends Controller
 
     public static function get($inventory_id){
         if(self::check($inventory_id)){
-            $inventory = Inventory::whereId($inventory_id)->get();
+            $inventory = Inventory::whereId($inventory_id)->first();
             $quantity = 0;
-            foreach(DB::table('sku')->where('inventory_id', $inventory[0]->id)->get() as $sku){
-                if($sku->valid == 1){
+            foreach($inventory->items as $item){
+                if($item->valid == 1){
                     $quantity++;
                 }
             }
             $inv = [
-                'id' => $inventory[0]->id,
-                'name' => $inventory[0]->name,
+                'id' => $inventory->id,
+                'name' => $inventory->name,
                 'quantity' => $quantity,
+                'digital' => $inventory->digital,
             ];
             if(Auth::check()){
                 if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_select')){
-                    $inv += [
-                        'unit' => DB::table('sku')
-                        ->select('id', 'value', 'valid')
-                        ->where('inventory_id', $inventory[0]->id)
-                        ->get(),
-                    ];
+                    if(!$inventory->digital){
+                        $inv += ['items' => $inventory->items];
+                    }
                 }
             }
             return $inv;

@@ -12,11 +12,17 @@ class Media extends Model
     protected $table = 'media';
 
     protected $fillable = [
-        'id',
         'path',
         'for',
         'primary',
         'created_by',
         'updated_by',
+    ];
+    protected $hidden = [
+        'id',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
     ];
 }

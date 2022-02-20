@@ -16,10 +16,11 @@ class CreateMediaTable extends Migration
         Schema::create('media', function (Blueprint $table) {
             $table->id();
             $table->string('path');
-            $table->integer('for');
-            $table->boolean('primary')->defaul(false);
+            $table->boolean('primary')->default(false);
             $table->integer('created_by');
             $table->integer('updated_by');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('media');
             $table->timestamps();
         });
     }
@@ -31,6 +32,10 @@ class CreateMediaTable extends Migration
      */
     public function down()
     {
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropForeign('media_product_id_foreign');
+            $table->dropColumn('product_id');
+        });
         Schema::dropIfExists('media');
     }
 }

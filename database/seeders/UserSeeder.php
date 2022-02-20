@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Hash;
-use DB;
 
 class UserSeeder extends Seeder
 {
@@ -15,8 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'avatar' => 'team-4.jpg',
+        User::create([
             'name' => 'Ismail Andaloussi',
             'role' => '3',
             'email' => 'admin@store',

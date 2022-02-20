@@ -16,15 +16,11 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->longText('short_description');
-            $table->longText('description');
-            $table->string('tags');
-            $table->integer('media_id');
-            $table->integer('category_id');
-            $table->integer('inventory_id');
+            $table->longText('short_description')->nullable();
+            $table->longText('description')->nullable();
+            $table->string('tags')->nullable();
             $table->float('price');
             $table->float('discount')->default(0.00);
-            $table->boolean('virtual');
             $table->boolean('available')->default(true);
             $table->integer('created_by');
             $table->integer('updated_by');

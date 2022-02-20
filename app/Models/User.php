@@ -23,7 +23,6 @@ class User extends Authenticatable implements JWTSubject, PurchaserInterface
     protected $fillable = [
         'id',
         'name',
-        'avatar',
         'role',
         'phone',
         'email',
