@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Sku;
+use Str;
 
 class SkuSeeder extends Seeder
 {
@@ -15,13 +16,13 @@ class SkuSeeder extends Seeder
     public function run()
     {
         Sku::create([
-            'value' => '',
-            'valid' => 1,
+            'value' => strtoupper(Str::random(5).'-'.Str::random(5).'-'.Str::random(5)),
+            'valid' => true,
             'inventory_id' => 1,
         ]);
         Sku::create([
-            'value' => '',
-            'valid' => 1,
+            'value' => strtoupper(Str::random(5).'-'.Str::random(5).'-'.Str::random(5)),
+            'valid' => true,
             'inventory_id' => 1,
         ]);
     }

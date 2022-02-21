@@ -16,7 +16,7 @@ class CreateSkusTable extends Migration
         Schema::create('skus', function (Blueprint $table) {
             $table->id();
             $table->string('value');
-            $table->boolean('valid');
+            $table->boolean('valid')->default(true);
             $table->unsignedBigInteger('inventory_id');
             $table->foreign('inventory_id')->references('id')->on('inventories');
             $table->timestamps();

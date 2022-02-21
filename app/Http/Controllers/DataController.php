@@ -18,6 +18,12 @@ class DataController extends Controller
                         'url' => 'dashboard',
                         'permissions' => ['dashboard_view'],
                     ],
+                    'product' => [
+                        'name' => 'Product',
+                        'icon' => 'tachometer-alt',
+                        'url' => 'product',
+                        'permissions' => ['product_view', 'product_new', 'product_edit', 'product_remove'],
+                    ],
                     'category' => [
                         'name' => 'Category',
                         'icon' => 'tachometer-alt',
@@ -29,12 +35,6 @@ class DataController extends Controller
                         'icon' => 'tachometer-alt',
                         'url' => 'inventory',
                         'permissions' => ['inventory_view', 'inventory_new', 'inventory_edit', 'inventory_remove'],
-                    ],
-                    'product' => [
-                        'name' => 'Product',
-                        'icon' => 'tachometer-alt',
-                        'url' => 'product',
-                        'permissions' => ['product_view', 'product_new', 'product_edit', 'product_remove'],
                     ],
                     'customer' => [
                         'name' => 'Customer',
