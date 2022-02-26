@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ContactSeeder::class,
             InventorySeeder::class,
-            SkuSeeder::class,
             MediaSeeder::class,
             ProductSeeder::class,
         ]);

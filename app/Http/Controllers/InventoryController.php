@@ -11,7 +11,7 @@ use DB;
 class InventoryController extends Controller
 {
     private static function check($inventory_id){
-        if(count(Inventory::whereId(lib::filter($inventory_id))->get())){
+        if(Inventory::whereId(lib::filter($inventory_id))->first()){
             return true;
         }
         return false;
@@ -176,7 +176,7 @@ class InventoryController extends Controller
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_remove')){
                 $inventory_id = lib::filter($request['inventory_id']);
                 if(self::check($inventory_id)){
-                    DB::delete("DELETE FROM `sku` WHERE inventory_id='$inventory_id'");
+                    Sku::where('inventory_id', $inventory_id)->delete();
                     Inventory::whereId($inventory_id)->delete();
                     return response()->json(['status' => 200]);
                 }
