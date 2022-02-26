@@ -17,6 +17,7 @@ class CreateInventoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('digital')->default(false);
+            $table->integer('quantity')->default(0);
             $table->timestamps();
         });
         Schema::table('products', function (Blueprint $table) {

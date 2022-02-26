@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\Sku;
 use Auth;
 use DB;
 
@@ -20,8 +21,8 @@ class InventoryController extends Controller
         $inventory_id = lib::filter($inventory_id);
         $value = lib::filter($value);
         if(self::check($inventory_id)){
-            $sku = DB::select("SELECT * FROM `sku` WHERE inventory_id='$inventory_id' AND value='$value'");
-            if(count($sku)){
+            $sku = Sku::where('inventory_id', $inventory_id)->where('value', $value)->first();
+            if($sku){
                 return true;
             }
         }
@@ -31,10 +32,13 @@ class InventoryController extends Controller
     public static function get($inventory_id){
         if(self::check($inventory_id)){
             $inventory = Inventory::whereId($inventory_id)->first();
-            $quantity = 0;
-            foreach($inventory->items as $item){
-                if($item->valid == 1){
-                    $quantity++;
+            $quantity = $inventory->quantity;
+            if(!$inventory->digital){
+                $quantity = 0;
+                foreach($inventory->items as $item){
+                    if($item->valid == 1){
+                        $quantity++;
+                    }
                 }
             }
             $inv = [
@@ -114,17 +118,34 @@ class InventoryController extends Controller
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_increment')){
                 $inventory_id = lib::filter($request['inventory_id']);
                 $value = lib::filter($request['value']);
-                if(!empty($value)){
-                    if(self::checkValue($inventory_id, $value)){
-                        return response()->json(['status' => 500, 'message' => 'Already exist']);
-                    }
+                $quantity = lib::filter($request['quantity']);
+                if(empty($inventory_id)){
+                    return response()->json(['status' => 500]);
                 }
-                $sku_id = DB::table('sku')->insertGetId([
-                    'inventory_id' => $inventory_id,
-                    'value' => $value,
-                    'valid' => 1,
-                ]);
-                return response()->json(['status' => 200, 'id' => $sku_id]);
+                $inventory = Inventory::whereId($inventory_id)->first();
+                if($inventory){
+                    if($inventory->digital){
+                        Inventory::whereId($inventory_id)->update([
+                            'quantity' => $quantity,
+                        ]);
+                    }
+                    if(!$inventory->digital){
+                        if(empty($value)){
+                            return response()->json(['status' => 500]);
+
+                        }
+                        if(self::checkValue($inventory_id, $value)){
+                            return response()->json(['status' => 500, 'message' => 'Already exist']);
+                        }
+                        Sku::create([
+                            'inventory_id' => $inventory_id,
+                            'value' => $value,
+                            'valid' => true,
+                        ]);
+                    }
+                    return response()->json(['status' => 200]);
+                }
+                return response()->json(['status' => 404]);
             }
             return response()->json(['status' => 403]);
         }
@@ -134,8 +155,10 @@ class InventoryController extends Controller
     public function descrement(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_descrement')){
-                $inventory_id = lib::filter($request['sku_id']);
-                if(DB::delete("DELETE FROM `sku` WHERE id='$inventory_id'")){
+                $sku_id = lib::filter($request['sku_id']);
+                $sku = Sku::whereId($sku_id)->first();
+                if($sku){
+                    Sku::whereId($sku_id)->delete();
                     return response()->json(['status' => 200]);
                 }
                 return response()->json(['status' => 404]);
