@@ -33,7 +33,7 @@ class InventoryController extends Controller
         if(self::check($inventory_id)){
             $inventory = Inventory::whereId($inventory_id)->first();
             $quantity = $inventory->quantity;
-            if(!$inventory->digital){
+            if($inventory->digital){
                 $quantity = 0;
                 foreach($inventory->items as $item){
                     if($item->valid == 1){
@@ -49,7 +49,7 @@ class InventoryController extends Controller
             ];
             if(Auth::check()){
                 if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_select')){
-                    if(!$inventory->digital){
+                    if($inventory->digital){
                         $inv += ['items' => $inventory->items];
                     }
                 }
@@ -79,9 +79,12 @@ class InventoryController extends Controller
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_new')){
                 $name = lib::filter($request['name']);
-                if(!count(Inventory::where('name', $name)->get())){
+                if(!Inventory::where('name', $name)->first()){
+                    $digital = $request['type'] == 2?1:0;
                     $inventory_id = Inventory::create([
                         'name' => $name,
+                        'digital' => $digital,
+                        'quantity' => 0,
                     ])->id;
                     return response()->json(['status' => 200, 'inventory_id' => (integer) $inventory_id]);
                 }
@@ -124,12 +127,12 @@ class InventoryController extends Controller
                 }
                 $inventory = Inventory::whereId($inventory_id)->first();
                 if($inventory){
-                    if($inventory->digital){
+                    if(!$inventory->digital){
                         Inventory::whereId($inventory_id)->update([
                             'quantity' => $quantity,
                         ]);
                     }
-                    if(!$inventory->digital){
+                    if($inventory->digital){
                         if(empty($value)){
                             return response()->json(['status' => 500]);
 
