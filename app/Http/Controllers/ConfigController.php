@@ -10,26 +10,26 @@ class ConfigController extends Controller
 {
     private static function check($key){
         $key = lib::filter($key);
-        if(count(Config::where('key', $key)->get())){
+        if(Config::where('key', $key)->first()){
             return true;
         }
         return false;
     }
     
     public static function get($key){
-        $key = lib::filter($key);
         $response = [];
-        $select = Config::where('key', $key)->get();
-        if(count($select)){
+        $key = lib::filter($key);
+        $select = Config::where('key', $key)->first();
+        if($select){
             $response = [
-                'key' => $select[0]->key,
-                'value' => $select[0]->value,
+                'key' => $select->key,
+                'value' => $select->value,
             ];
             if(Auth::check()){
                 if(Auth::user()->role >= 3 || self::access(Auth::user()->id, 'config_view')){
                     $response += [
-                        'created_by' => $select[0]->created_by,
-                        'updated_by' => $select[0]->updated_by,
+                        'created_by' => $select->created_by,
+                        'updated_by' => $select->updated_by,
                     ];
                 }
             }
