@@ -42,6 +42,12 @@ class DataController extends Controller
                         'url' => 'customer',
                         'permissions' => ['customer_view', 'customer_new', 'customer_edit', 'customer_remove'],
                     ],
+                    'settings' => [
+                        'name' => 'Settings',
+                        'icon' => 'tachometer-alt',
+                        'url' => 'settings',
+                        'permissions' => ['settings_view', 'settings_new', 'settings_edit', 'settings_remove'],
+                    ],
 
                 ];
                 $response = [];
