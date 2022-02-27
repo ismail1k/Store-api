@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\Product;
 use App\Models\Sku;
 use Auth;
 use DB;
@@ -49,6 +50,7 @@ class InventoryController extends Controller
             ];
             if(Auth::check()){
                 if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_select')){
+                    $inv += ['product' => count(Product::where('inventory_id', $inv['id'])->get())];
                     if($inventory->digital){
                         $inv += ['items' => $inventory->items];
                     }
@@ -98,8 +100,8 @@ class InventoryController extends Controller
     public function edit(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_edit')){
-                $inventory_id = lib::filter($request['inventory_id']);
-                $new_name = lib::filter($request['new_name']);
+                $inventory_id = $request['inventory_id'];
+                $new_name = $request['new_name'];
                 if(self::check($inventory_id)){
                     if(count(Inventory::where('name', $new_name)->get()) || empty($new_name)){
                         return response()->json(['status' => 500, 'message' => 'Bad name']);    
