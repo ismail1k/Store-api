@@ -13,7 +13,7 @@ class Media extends Model
 
     protected $fillable = [
         'path',
-        'for',
+        'product_id',
         'primary',
         'created_by',
         'updated_by',

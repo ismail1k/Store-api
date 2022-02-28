@@ -80,17 +80,22 @@ class InventoryController extends Controller
     public function new(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_new')){
-                $name = lib::filter($request['name']);
-                if(!Inventory::where('name', $name)->first()){
-                    $digital = $request['type'] == 2?1:0;
-                    $inventory_id = Inventory::create([
-                        'name' => $name,
-                        'digital' => $digital,
-                        'quantity' => 0,
-                    ])->id;
-                    return response()->json(['status' => 200, 'inventory_id' => (integer) $inventory_id]);
+                $name = $request['name'];
+                $type = $request['type'] == 2?1:0;
+                $inventory = Inventory::where('name', $name)->first();
+                if($inventory){
+                    return response()->json([
+                        'status' => 200,
+                        'inventory_id' => $inventory->id,
+                        'message' => 'Already exist',
+                    ]);
                 }
-                return response()->json(['status' => 500, 'message' => 'Already exist']);
+                $inventory_id = Inventory::create([
+                    'name' => $name,
+                    'digital' => $type,
+                    'quantity' => 0,
+                ])->id;
+                return response()->json(['status' => 200, 'inventory_id' => $inventory_id]);
             }
             return response()->json(['status' => 403]);
         }

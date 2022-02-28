@@ -21,7 +21,7 @@ class CreateInventoriesTable extends Migration
             $table->timestamps();
         });
         Schema::table('products', function (Blueprint $table) {
-            $table->unsignedBigInteger('inventory_id');
+            $table->unsignedBigInteger('inventory_id')->nullable();
             $table->foreign('inventory_id')->references('id')->on('inventories');
         });
     }

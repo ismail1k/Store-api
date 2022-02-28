@@ -118,13 +118,13 @@ class ProductController extends Controller
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'product_create')){
                 $product_id = Product::create([
                     'name' => lib::filter($request['name']),
-                    'short_description' => lib::filter($request['short_description']),
-                    'description' => lib::filter($request['description']),
+                    'short_description' => $request['short_description'],
+                    'description' => $request['description'],
                     'tags' => lib::filter($request['tags']),
-                    'category_id' => lib::filter($request['category_id']),
+                    'category_id' => $request['category_id']>0?$request['category_id']:null,
                     'inventory_id' => lib::filter($request['inventory_id']),
-                    'price' => lib::filter($request['price']),
-                    'discount' => lib::filter($request['discount']),
+                    'price' => $request['price'],
+                    'discount' => $request['discount'],
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ])->id;

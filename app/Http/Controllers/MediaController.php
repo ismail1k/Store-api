@@ -51,7 +51,6 @@ class MediaController extends Controller
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'media_new')){
                 $acceptable_format = ['video', 'image'];
                 if(in_array(strstr($request['attachment']->getClientmimeType(), '/', true), $acceptable_format)){                
-                    $media_id = [];
                     $product_id = lib::filter($request['product_id']);
                     $primary = $request['primary'] == 1 ? true : false;
                     $media = $request->file('attachment');

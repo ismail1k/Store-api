@@ -29,7 +29,11 @@ class CategoryController extends Controller
             if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'category_new')){
                 $category_name = lib::filter($request['category_name']);
                 if(!empty($category_name)){
-                    $category_id = Category::create(['name' => $category_name])->id;
+                    $category = Category::where('name', $category_name)->first();
+                    $category_id = @$category->id;
+                    if(!$category){
+                        $category_id = Category::create(['name' => $category_name])->id;
+                    }
                     return response()->json(['status' => 200, 'category_id' => (integer) $category_id]);
                 }
                 return response()->json(['status' => 400]);
