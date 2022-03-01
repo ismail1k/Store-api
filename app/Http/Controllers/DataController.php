@@ -24,17 +24,29 @@ class DataController extends Controller
                         'url' => 'product',
                         'permissions' => ['product_view', 'product_new', 'product_edit', 'product_remove'],
                     ],
-                    'category' => [
-                        'name' => 'Category',
+                    'order' => [
+                        'name' => 'Order',
                         'icon' => 'tachometer-alt',
-                        'url' => 'category',
-                        'permissions' => ['category_view', 'category_new', 'category_edit', 'category_remove'],
+                        'url' => 'order',
+                        'permissions' => ['order_view', 'order_new', 'order_edit', 'order_remove'],
                     ],
                     'inventory' => [
                         'name' => 'Inventory',
                         'icon' => 'tachometer-alt',
                         'url' => 'inventory',
                         'permissions' => ['inventory_view', 'inventory_new', 'inventory_edit', 'inventory_remove'],
+                    ],
+                    'integration' => [
+                        'name' => 'Integration',
+                        'icon' => 'tachometer-alt',
+                        'url' => 'integration',
+                        'permissions' => ['integration_view', 'integration_new', 'integration_edit', 'integration_remove'],
+                    ],
+                    'category' => [
+                        'name' => 'Category',
+                        'icon' => 'tachometer-alt',
+                        'url' => 'category',
+                        'permissions' => ['category_view', 'category_new', 'category_edit', 'category_remove'],
                     ],
                     'customer' => [
                         'name' => 'Customer',
