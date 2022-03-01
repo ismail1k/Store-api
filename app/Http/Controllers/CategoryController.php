@@ -64,6 +64,7 @@ class CategoryController extends Controller
             if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'category_remove')){
                 $category_id = lib::filter($request['category_id']);
                 if(!empty($category_id)){
+                    Product::where('category_id', $category_id)->update(['category_id'=>null]);
                     Category::whereId($category_id)->delete();
                     return response()->json(['status' => 200]);
                 }
