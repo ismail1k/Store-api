@@ -61,14 +61,23 @@ class ProductController extends Controller
                 $mime_type = strstr(mime_content_type(Storage::path('public\\'.$file->path)), '/', true);
                 if($file->primary != 1){
                     if($mime_type == 'image'){
-                        array_push($media['image'], Storage::url('public/'.$file->path));
+                        array_push($media['image'], [
+                            'id' => $file->id,
+                            'path' => Storage::url('public/'.$file->path),
+                        ]);
                     }
                     if($mime_type == 'video'){
-                        array_push($media['video'], Storage::url('public/'.$file->path));
+                        array_push($media['video'], [
+                            'id' => $file->id,
+                            'path' => Storage::url('public/'.$file->path),
+                        ]);
                     }
                     continue;
                 }
-                $media['primary'] = Storage::url('public/'.$file->path);
+                $media['primary'] = [
+                    'id' => $file->id,
+                    'path' => Storage::url('public/'.$file->path),
+                ];
             }
             $response = [
                 'id' => $product->id,
@@ -86,6 +95,7 @@ class ProductController extends Controller
             if(Auth::check()){
                 if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'product_view')){
                     $response += [
+                        'availability' => (boolean)$product->available,
                         'created_by' => $product->created_by,
                         'updated_by' => $product->updated_by,
                     ];

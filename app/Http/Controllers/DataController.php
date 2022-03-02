@@ -18,17 +18,17 @@ class DataController extends Controller
                         'url' => 'dashboard',
                         'permissions' => ['dashboard_view'],
                     ],
-                    'product' => [
-                        'name' => 'Product',
-                        'icon' => 'tachometer-alt',
-                        'url' => 'product',
-                        'permissions' => ['product_view', 'product_new', 'product_edit', 'product_remove'],
-                    ],
                     'order' => [
                         'name' => 'Order',
                         'icon' => 'tachometer-alt',
                         'url' => 'order',
                         'permissions' => ['order_view', 'order_new', 'order_edit', 'order_remove'],
+                    ],
+                    'product' => [
+                        'name' => 'Product',
+                        'icon' => 'tachometer-alt',
+                        'url' => 'product',
+                        'permissions' => ['product_view', 'product_new', 'product_edit', 'product_remove'],
                     ],
                     'inventory' => [
                         'name' => 'Inventory',
