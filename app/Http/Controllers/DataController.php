@@ -36,12 +36,12 @@ class DataController extends Controller
                         'url' => 'inventory',
                         'permissions' => ['inventory_view', 'inventory_new', 'inventory_edit', 'inventory_remove'],
                     ],
-                    'integration' => [
-                        'name' => 'Integration',
-                        'icon' => 'tachometer-alt',
-                        'url' => 'integration',
-                        'permissions' => ['integration_view', 'integration_new', 'integration_edit', 'integration_remove'],
-                    ],
+                    // 'integration' => [
+                    //     'name' => 'Integration',
+                    //     'icon' => 'tachometer-alt',
+                    //     'url' => 'integration',
+                    //     'permissions' => ['integration_view', 'integration_new', 'integration_edit', 'integration_remove'],
+                    // ],
                     'category' => [
                         'name' => 'Category',
                         'icon' => 'tachometer-alt',
