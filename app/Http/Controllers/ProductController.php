@@ -183,6 +183,13 @@ class ProductController extends Controller
             if(Auth::user()->role || lib::access(Auth::user()->id, 'product_remove')){
                 if(self::check($product_id)){
                     Product::whereId($product_id)->delete();
+                    $media = Media::where('product_id', $product_id)->get();
+                    foreach($media as $m){
+                        $url = $m->path;
+                        $file = Storage::path('public\\'.$url);
+                        @unlink($file);
+                        Media::whereId($m->id)->delete();
+                    }
                     return response()->json(['status' => 200]);            
                 }
                 return response()->json(['status' => 404]);

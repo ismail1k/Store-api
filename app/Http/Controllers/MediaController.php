@@ -91,8 +91,8 @@ class MediaController extends Controller
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'media_remove')){
                 $media_id = lib::filter($request['media_id']);
                 if(self::check($media_id)){
-                    $media = Media::whereId($media_id)->get();
-                    $url = $media[0]->path;
+                    $media = Media::whereId($media_id)->first();
+                    $url = $media->path;
                     $file = Storage::path('public\\'.$url);
                     @unlink($file);
                     Media::whereId($media_id)->delete();
