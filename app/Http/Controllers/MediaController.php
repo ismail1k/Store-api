@@ -49,10 +49,16 @@ class MediaController extends Controller
     public function new(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'media_new')){
-                $acceptable_format = ['video', 'image'];
+                $acceptable_format = ['image'];
                 if(in_array(strstr($request['attachment']->getClientmimeType(), '/', true), $acceptable_format)){                
-                    $product_id = lib::filter($request['product_id']);
+                    $product_id = $request['product_id'];
                     $primary = $request['primary'] == 1 ? true : false;
+                    if($primary){
+                        if($media = Media::where('product_id', $product_id)->where('primary', true)->first()){
+                            @unlink(Storage::path('public\\'.$media->path));
+                            Media::whereId($media->id)->delete();
+                        }
+                    }
                     $media = $request->file('attachment');
                     $file_name = strtolower(str_replace(':', '-', lib::time().' '.rand(000000, 111599)).'.'.$media->getClientOriginalExtension());
                     $temp = $media->move(storage_path('app\\public'), $file_name);

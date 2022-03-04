@@ -17,16 +17,7 @@ class ProductController extends Controller
             if(self::check($product_id) && is_array($record)){
                 $product = Product::whereId($product_id)->first();
                 foreach($record as $key => $value){
-                    $key = lib::filter($key);
-                    $value = lib::filter($value);
-                    if(empty($value)){
-                        if(in_array($key, ['name', 'short_description', 'description', 'tags', 'category_id', 'inventory_id', 'price'])){
-                            continue;
-                        }
-                    }
-                    if($product->$key != $value){
-                        Product::whereId($product_id)->update([$key => $value, 'updated_by' => Auth::user()->id]);
-                    }
+                    Product::whereId($product_id)->update([$key => $value, 'updated_by' => Auth::user()->id]);
                 }
                 return true;
             }
@@ -178,16 +169,16 @@ class ProductController extends Controller
     public function edit(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >=3 || lib::access(Auth::user()->id, 'product_edit')){
-                @self::editProduct(lib::filter($request['product_id']), [
-                    'name' => lib::filter($request['name']),
-                    'short_description' => lib::filter($request['short_description']),
-                    'description' => lib::filter($request['description']),
-                    'tags' => lib::filter($request['tags']),
-                    'category_id' => lib::filter($request['category_id']),
-                    'inventory_id' => lib::filter($request['inventory_id']),
-                    'price' => (double) round(lib::filter($request['price']), 2),
-                    'discount' => (double) round(lib::filter($request['discount']), 2),
-                    'available' => (string) lib::filter($request['available']) == 1 ? '1' : '0',
+                @self::editProduct($request['product_id'], [
+                    'name' => $request['name'],
+                    'short_description' => $request['short_description'],
+                    'description' => $request['description'],
+                    'tags' => $request['tags'],
+                    'category_id' => $request['category_id'],
+                    'inventory_id' => $request['inventory_id'],
+                    'price' => (double) round($request['price'], 2),
+                    'discount' => (double) round($request['discount'], 2),
+                    'available' => $request['available'] == 1 ? 1 : 0,
                 ]);
                 return response()->json(['status' => 200]);
             }
