@@ -79,7 +79,7 @@ class ProductController extends Controller
                 'url' => $product->name,
                 'media' => $media,
                 'category' => $product->category,
-                'inventory' => InventoryController::get($product->inventory->id),
+                'inventory' => InventoryController::get($product->inventory_id),
                 'price' => round($product->price, 2),
                 'discount' => round($product->discount, 2),
             ];
@@ -169,17 +169,7 @@ class ProductController extends Controller
     public function edit(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >=3 || lib::access(Auth::user()->id, 'product_edit')){
-                @self::editProduct($request['product_id'], [
-                    'name' => $request['name'],
-                    'short_description' => $request['short_description'],
-                    'description' => $request['description'],
-                    'tags' => $request['tags'],
-                    'category_id' => $request['category_id'],
-                    'inventory_id' => $request['inventory_id'],
-                    'price' => (double) round($request['price'], 2),
-                    'discount' => (double) round($request['discount'], 2),
-                    'available' => $request['available'] == 1 ? 1 : 0,
-                ]);
+                self::editProduct($request['product_id'], $request->except(['product_id','token']));
                 return response()->json(['status' => 200]);
             }
             return response()->json(['status' => 403]);
