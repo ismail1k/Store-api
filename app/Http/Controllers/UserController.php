@@ -37,7 +37,7 @@ class UserController extends Controller
 
     public function all(){
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_all')){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_all')){
                 $response = [];
                 foreach(User::all() as $user){
                     $admin = $user->role >= 2 ? true : false;
@@ -64,7 +64,7 @@ class UserController extends Controller
     public function select(Request $request){
         $user_id = lib::filter($request['user_id']);
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_select')){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_select')){
                 if($user = User::whereId($user_id)->first()){
                     return response()->json(self::get($user->id));
                 }
@@ -96,12 +96,12 @@ class UserController extends Controller
 
     public function edit(Request $request){
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_edit')){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_edit')){
                 $user_id = $request['user_id'];
                 if(count(User::whereId($user_id)->get())){
                     User::whereId($user_id)->update($request->except('token', 'user_id', 'role'));
                     if(!empty($request['role'])){
-                        if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_edit_role') && (Auth::user()->id != $user_id)){
+                        if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_edit_role') && (Auth::user()->id != $user_id)){
                             if($user_id != Auth::user()->id){
                                 User::whereId($user_id)->update([
                                     'role' => is_numeric($request['role']) ? $request['role'] : 1,
@@ -122,7 +122,7 @@ class UserController extends Controller
 
     public function ban(Request $request){
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_ban')){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_ban')){
                 if($user = User::whereId($request['user_id'])->first()){
                     if($user->id != Auth::user()->id){
                         User::whereId($user->id)->update(['active' => false]);
@@ -139,7 +139,7 @@ class UserController extends Controller
 
     public function unban(Request $request){
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_unban')){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'customer_unban')){
                 if($user = User::whereId($request['user_id'])->first()){
                     if($user->id != Auth::user()->id){
                         User::whereId($user->id)->update(['active' => true]);

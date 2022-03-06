@@ -51,7 +51,7 @@ class AuthController extends Controller
                 'auth' => true,
                 'admin' => auth()->user()->role >= 2 ? true : false,
                 'owner' => auth()->user()->role >= 3 ? true : false,
-                'avatar' => auth()->user()->avatar,
+                'role' => auth()->user()->role,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
                 'permission' => auth()->user()->getAllPermissions(),
