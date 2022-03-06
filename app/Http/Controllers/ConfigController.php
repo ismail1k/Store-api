@@ -26,7 +26,7 @@ class ConfigController extends Controller
                 'value' => $select->value,
             ];
             if(Auth::check()){
-                if(Auth::user()->role >= 3 || self::access(Auth::user()->id, 'config_view')){
+                if(Auth::user()->role >= 2){
                     $response += [
                         'created_by' => $select->created_by,
                         'updated_by' => $select->updated_by,
@@ -40,7 +40,7 @@ class ConfigController extends Controller
 
     public function all(){
         if(Auth::check()){
-            if(Auth::user()->role >= 3 || lib::access('config_all')){
+            if(Auth::user()->role >= 2){
                 $all = Config::all();
                 $response = [];
                 if(count($all)){
@@ -68,7 +68,7 @@ class ConfigController extends Controller
 
     public function new(Request $request){
         if(Auth::check()){
-            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'config_new')){
+            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'settings_new')){
                 $key = lib::filter($request['key']);
                 $value = lib::filter($request['value']);
                 if(empty($key) || count(Config::where('key', $key)->get())){
@@ -100,7 +100,7 @@ class ConfigController extends Controller
 
     public function edit(Request $request){
         if(Auth::check()){
-            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'config_edit')){
+            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'settings_edit')){
                 $config_id = lib::filter($request['config_id']);
                 $value = lib::filter($request['value']);
                 if(empty($config_id)){
@@ -119,7 +119,7 @@ class ConfigController extends Controller
 
     public function remove(Request $request){
         if(Auth::check()){
-            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'config_remove')){
+            if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'settings_remove')){
                 $config_id = lib::filter($request['config_id']);
                 if(empty($config_id)){
                     return response()->json(['status' => 500, 'message' => 'Bad credentials']);

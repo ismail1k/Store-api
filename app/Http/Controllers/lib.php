@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Permission;
+use App\Models\User;
 use Carbon\Carbon;
 
 class lib extends Controller
@@ -17,18 +17,18 @@ class lib extends Controller
     }
 
     public static function access($user_id, $table){
-        $permission = false;
-        $user_id = lib::filter($user_id);
-        $table = lib::filter($table);
-        $perms = Permission::where('user_id', $user_id)->get();
-        foreach($perms as $perm){
-            if($perm->name == $table){
-                if($perm->access == true){
-                    $permission = true;
-                }
-            }
+        $table = explode('_', $table);
+        $user = User::whereId($user_id)->first();
+        if($user->role != 2){
+            return false;
         }
-        return $permission;
+        if(!$user->active){
+            return false;
+        }
+        if($user->hasPermissionTo($table[0])){
+            return true;
+        }
+        return false;
     }
     
     public static function time(){

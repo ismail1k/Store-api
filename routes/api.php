@@ -40,7 +40,8 @@ Route::group(['prefix'=>'user', 'as'=>'user'], function(){
     Route::get('/all', [App\Http\Controllers\UserController::class, 'all'])->name('all');
     Route::post('/new', [App\Http\Controllers\UserController::class, 'new'])->name('new');
     Route::post('/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('edit');
-    Route::get('/remove', [App\Http\Controllers\UserController::class, 'remove'])->name('remove');
+    Route::post('/ban', [App\Http\Controllers\UserController::class, 'ban'])->name('ban');
+    Route::post('/unban', [App\Http\Controllers\UserController::class, 'unban'])->name('unban');
 });
 Route::group(['prefix'=>'category', 'as'=>'category'], function(){
     Route::get('/', [App\Http\Controllers\CategoryController::class, 'all'])->name('all');
@@ -59,10 +60,9 @@ Route::group(['prefix'=>'inventory', 'as'=>'invetory'], function(){
 });
 Route::group(['prefix'=>'permission', 'as'=>'permission'], function(){
     Route::get('/', [App\Http\Controllers\PermissionController::class, 'all'])->name('all');
-    Route::post('/new', [App\Http\Controllers\PermissionController::class, 'new'])->name('new');
-    Route::get('/remove', [App\Http\Controllers\PermissionController::class, 'remove'])->name('remove');
-    Route::get('/allow', [App\Http\Controllers\PermissionController::class, 'allow'])->name('allow');
-    Route::get('/disallow', [App\Http\Controllers\PermissionController::class, 'disallow'])->name('disallow');
+    Route::post('/allow', [App\Http\Controllers\PermissionController::class, 'allow'])->name('allow');
+    Route::post('/disallow', [App\Http\Controllers\PermissionController::class, 'disallow'])->name('disallow');
+    Route::post('/update', [App\Http\Controllers\PermissionController::class, 'update'])->name('update');
 });
 Route::group(['prefix'=>'media', 'as'=>'media'], function(){
     Route::get('/', [App\Http\Controllers\MediaController::class, 'all'])->name('all');

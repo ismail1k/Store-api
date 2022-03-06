@@ -15,6 +15,7 @@
         "laravel/tinker": "^2.5",
         "orphans/git-deploy-laravel": "^0.5.0",
         "pusher/pusher-php-server": "^7.0",
+        "spatie/laravel-permission": "^5.5",
         "tymon/jwt-auth": "*",
         "yabhq/laravel-cart": "^0.20.0"
     },

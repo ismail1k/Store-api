@@ -18,10 +18,14 @@ class AuthController extends Controller
                 'password' => $password,
             ]);
             if($token){
+                $user = (object)UserController::get(auth()->user()->id);
                 return response()->json([
                     'auth' => true,
+                    'active' => $user->active,
+                    'admin' => $user->admin,
+                    'owner' => $user->owner,
                     'token' => $token,
-                    'admin' => auth()->user()->role > 1?true:false,
+                    'permission' => $user->permission,
                 ]);
             }
         }
@@ -38,15 +42,19 @@ class AuthController extends Controller
 
     public function me(Request $request){
         if(auth()->check()){
+            if(!Auth()->user()->active){
+                return response()->json(['active'=>false]);
+            }
             return response()->json([
+                'id' => auth()->user()->id,
+                'active' => auth()->user()->active,
                 'auth' => true,
                 'admin' => auth()->user()->role >= 2 ? true : false,
                 'owner' => auth()->user()->role >= 3 ? true : false,
-                'id' => auth()->user()->id,
                 'avatar' => auth()->user()->avatar,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
-                'permission' => Permission::select('name', 'access')->where('user_id', auth()->user()->id)->get(),
+                'permission' => auth()->user()->getAllPermissions(),
             ]);
         }
         return response()->json(['auth' => false]);

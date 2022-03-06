@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             InventorySeeder::class,
             MediaSeeder::class,
             ProductSeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

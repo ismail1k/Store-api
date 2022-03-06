@@ -16,10 +16,24 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'Default Account',
+            'name' => 'Owner Account',
             'role' => '3',
             'phone' => '0612345678',
-            'email' => 'admin@store',
+            'email' => 'owner@store',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'Staff Account',
+            'role' => '2',
+            'phone' => '0612345678',
+            'email' => 'staff@store',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'Customer Account',
+            'role' => '1',
+            'phone' => '0612345678',
+            'email' => 'customer@store',
             'password' => Hash::make('password'),
         ]);
     }

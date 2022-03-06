@@ -9,17 +9,26 @@ use Auth;
 
 class UserController extends Controller
 {
-    private static function get($user_id){
+    public static function get($user_id){
         if($user = User::whereId($user_id)->first()){
+            $permission = [];
+            $menu = MenuController::get();
+            foreach($menu as $key => $value){
+                $permission[$key] = false;
+            }
+            foreach($user->getAllPermissions() as $permissions){
+                $permission[$permissions->name] = true;
+            }
             $response = [
                 'admin' => $user->role >= 2 ? true : false,
                 'owner' => $user->role >= 3 ? true : false,
                 'id' => $user->id,
                 'role' => $user->role,
+                'active' => $user->active,
                 'name' => $user->name,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'permission' => Permission::select('id', 'name', 'access')->where('user_id', $user->id)->get(),
+                'permission' => $permission,
             ];
             return $response;
         }
@@ -38,10 +47,11 @@ class UserController extends Controller
                         'owner' => $owner,
                         'id' => $user->id,
                         'role' => $user->role,
+                        'active' => $user->active,
                         'name' => $user->name,
                         'email' => $user->email,
                         'phone' => $user->phone,
-                        'permission' => Permission::select('id', 'name', 'access')->where('user_id', $user->id)->get(),
+                        'permission' => $user->getAllPermissions(),
                     ]);
                 }
                 return response()->json($response);
@@ -110,15 +120,34 @@ class UserController extends Controller
         return response()->json(['status' => 401]);
     }
 
-    public function remove(Request $request){
+    public function ban(Request $request){
         if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_remove')){
-                $user_id = lib::filter($request['user_id']);
-                if(!count(User::where('id', $user_id)->get())){
-                    return response()->json(['status' => 404]);
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_ban')){
+                if($user = User::whereId($request['user_id'])->first()){
+                    if($user->id != Auth::user()->id){
+                        User::whereId($user->id)->update(['active' => false]);
+                        return response()->json(['status' => 200]);
+                    }
+                    return response()->json(['status' => 500]);
                 }
-                User::whereId($user_id)->delete();
-                return response()->json(['status' => 200]);
+                return response()->json(['status' => 404]);
+            }
+            return response()->json(['status' => 403]);
+        }
+        return response()->json(['status' => 401]);
+    }
+
+    public function unban(Request $request){
+        if(Auth::check()){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_unban')){
+                if($user = User::whereId($request['user_id'])->first()){
+                    if($user->id != Auth::user()->id){
+                        User::whereId($user->id)->update(['active' => true]);
+                        return response()->json(['status' => 200]);
+                    }
+                    return response()->json(['status' => 500]);
+                }
+                return response()->json(['status' => 404]);
             }
             return response()->json(['status' => 403]);
         }
