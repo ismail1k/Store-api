@@ -88,21 +88,17 @@ class UserController extends Controller
         if(Auth::check()){
             if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_edit')){
                 $user_id = $request['user_id'];
-                $name = $request['name'];
-                $email = $request['email'];
-                $phone = $request['phone'];
-                $role = $request['role'];
                 if(count(User::whereId($user_id)->get())){
-                    User::whereId($user_id)->update([
-                        'name' => $name,
-                        'email' => $email,
-                        'phone' => $phone,
-                    ]);
-                    if(!empty($role)){
+                    User::whereId($user_id)->update($request->except('token', 'user_id', 'role'));
+                    if(!empty($request['role'])){
                         if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'user_edit_role') && (Auth::user()->id != $user_id)){
-                            User::whereId($user_id)->update([
-                                'role' => is_numeric($role) ? $role : 1,
-                            ]);
+                            if($user_id != Auth::user()->id){
+                                User::whereId($user_id)->update([
+                                    'role' => is_numeric($request['role']) ? $request['role'] : 1,
+                                ]);
+                            }
+                        } else {
+                            return response()->json(['status' => 200, 'message' => 'Unauthorized to change role!']);
                         }
                     }
                     return response()->json(['status' => 200]);
