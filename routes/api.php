@@ -21,6 +21,9 @@ Route::group(['prefix'=>'search', 'as'=>'search'], function(){
 Route::group(['prefix'=>'contact', 'as'=>'contact'], function(){
     Route::post('/send', [App\Http\Controllers\ContactController::class, 'send'])->name('send');
 });
+Route::group(['prefix'=>'data', 'as'=>'data'], function(){
+    Route::get('/menu', [App\Http\Controllers\DataController::class, 'menu'])->name('menu');
+});
 Route::group(['prefix'=>'auth'], function(){
     Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
     Route::get('/me', [App\Http\Controllers\AuthController::class, 'me'])->name('me');
@@ -84,9 +87,14 @@ Route::group(['prefix'=>'cart', 'as'=>'cart'], function(){
     Route::post('/removeFromCart', [App\Http\Controllers\CartController::class, 'removeFromCart'])->name('removeFromCart');
     Route::get('/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('clear');
 });
-Route::group(['prefix'=>'data', 'as'=>'data'], function(){
-    Route::get('/menu', [App\Http\Controllers\DataController::class, 'menu'])->name('menu');
+Route::group(['prefix'=>'order', 'as'=>'order'], function(){
+    Route::get('/', [App\Http\Controllers\OrderController::class, 'all'])->name('all');
+    Route::get('/view', [App\Http\Controllers\OrderController::class, 'view'])->name('view');
+    Route::post('/new', [App\Http\Controllers\OrderController::class, 'new'])->name('new');
+    Route::post('/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
+    Route::post('/remove', [App\Http\Controllers\OrderController::class, 'remove'])->name('remove');
 });
+
 // Route::group(['prefix'=>'checkout', 'as'=>'checkout'], function(){
 //     Route::post('', [App\Http\Controllers\Checkout\CheckoutController::class, 'store'])->name('checkout.store');
 //     Route::get('{checkout}', [App\Http\Controllers\Checkout\CheckoutController::class, 'show'])->name('checkout.show');
@@ -97,10 +105,3 @@ Route::group(['prefix'=>'data', 'as'=>'data'], function(){
 //     Route::delete('{checkout}/items/{itemId}', [App\Http\Controllers\Checkout\CheckoutItemController::class, 'destroy'])->name('checkout.items.destroy');
 //     Route::post('{checkout}/discount', [App\Http\Controllers\Checkout\CheckoutDiscountController::class, 'store'])->name('checkout.discount');
 // });
-Route::group(['prefix'=>'order', 'as'=>'order'], function(){
-    // Route::get('/', [App\Http\Controllers\OrderController::class, 'all'])->name('all');
-    // Route::post('/new', [App\Http\Controllers\OrderController::class, 'new'])->name('new');
-    // Route::post('/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
-    // Route::get('/view', [App\Http\Controllers\OrderController::class, 'view'])->name('view');
-    // Route::get('/remove', [App\Http\Controllers\OrderController::class, 'remove'])->name('remove');
-});
