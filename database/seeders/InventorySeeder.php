@@ -16,7 +16,7 @@ class InventorySeeder extends Seeder
     {
         Inventory::create([
             'name' => 'D\'Urbano Baskets Stretch et cuir - Blanc.\'s Inventory',
-            'quantity' => 5,
+            'quantity' => 10,
             'digital' => 0,
         ]);
     }

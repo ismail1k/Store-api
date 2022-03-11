@@ -10,9 +10,24 @@ use Auth;
 class CartController extends Controller
 {
     public function all(Request $request){
-        $cart = Checkout::findById((string)$request['cart']);
-        if($cart){
-            return response()->json($cart->getCart());
+        if(Checkout::findById((string)$request['cart'])){
+            $cart = [
+                'id' => Checkout::findById((string)$request['cart'])->getCart()->id,
+                'items' => [],
+            ];
+            foreach(Checkout::findById((string)$request['cart'])->getCart()->items as $item){
+                $product = Product::whereId($item->purchaseable_id)->first();
+                array_push($cart['items'], [
+                    'id' => $product->id,
+                    'item_id' => $item->id,
+                    'name' => $product->name,
+                    'description' => $product->short_description,
+                    'price' => $item->price,
+                    'unit_price' => $item->unit_price,
+                    'quantity' => $item->qty,
+                ]);
+            }
+            return response()->json($cart);
         }
         return response()->json(['status' => 404]);
     }

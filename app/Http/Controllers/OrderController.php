@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Yab\ShoppingCart\Checkout;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Order;
@@ -13,11 +14,25 @@ class OrderController extends Controller
 {
     private static function get($order_id){
         if($order = Order::whereId($order_id)->first()){
+            $cart = [
+                'id' => Checkout::findById($order->cart_id)->getCart()->id,
+                'items' => [],
+            ];
+            foreach(Checkout::findById($order->cart_id)->getCart()->items as $item){
+                $product = Product::whereId($item->id)->first();
+                array_push($cart['items'], [
+                    'id' => $item->id,
+                    'name' => $product->name,
+                    'description' => $product->short_description,
+                    'price' => $item->price,
+                    'unit_price' => $item->unit_price,
+                    'quantity' => $item->qty,
+                ]);
+            }
             return [
                 'id' => $order->id,
-                'product' => ProductController::get($order->product_id),
-                'user' => $order->user_id?User::whereId($order->user_id):null,
-                'quantity' => $order->quantity,
+                'cart' => $cart,
+                'user' => $order->user_id?User::whereId($order->user_id)->first():null,
                 'payment_method' => $order->payment_method,
                 'fullname' => $order->fullname,
                 'address' => $order->address,
@@ -60,7 +75,7 @@ class OrderController extends Controller
         if(Auth::check()){
             if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'order_edit')){
                 if(Order::whereId($request['order_id'])->first()){
-                    Order::whereId($request['order_id'])->update($request->except('token', 'order_id'));
+                    Order::whereId($request['order_id'])->update($request->except('token', 'order_id', 'cart_id'));
                     return response()->json(['status' => 200]);
                 }
                 return response()->json(['status' => 404]);
@@ -71,17 +86,13 @@ class OrderController extends Controller
     }
 
     public function new(Request $request){
-        $product = Product::whereId($request['product_id'])->first();
+        $cart = Checkout::findById((string)$request['cart_id']);
         $user = User::whereId($request['user_id'])->first();
-        $quantity = $request['quantity'];
         $fullname = $request['fullname'];
         $payment_method = $request['payment_method'];
         $address = $request['address'];
         $phone = $request['phone'];
         $note = $request['note'];
-        if(!$product->available){
-            return response()->json(['status' => 404]);
-        }
         if(!$payment_method){
             return response()->json(['status' => 500, 'message' => 'Bad Payment Method']);
         }
@@ -94,20 +105,13 @@ class OrderController extends Controller
         if(!$address){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
-        if(($product->inventory->quantity < $quantity) || !$quantity){
-            return response()->json(['status' => 500, 'message' => 'Bad Quantity']);
-        }
-        Inventory::whereId($product->inventory->id)->update([
-            'quantity' => $product->inventory->quantity - $quantity,
-        ]);
         $order_id = Order::create([
-            'product_id' => $product->id,
+            'cart_id' => $request['cart_id'],
             'user_id' => $user?$user->id:null,
             'fullname' => $fullname,
             'address' => $address,
             'phone' => $phone,
             'payment_method' => $payment_method,
-            'quantity' => $quantity,
             'note' => $note,
         ])->id;
         return response()->json(['status' => 200, 'order_id' => $order_id]);
