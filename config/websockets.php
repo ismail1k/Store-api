@@ -20,7 +20,7 @@ return [
         'path' => env('LARAVEL_WEBSOCKETS_PATH', 'laravel-websockets'),
 
         'middleware' => [
-            'web',
+            'api',
             \BeyondCode\LaravelWebSockets\Dashboard\Http\Middleware\Authorize::class,
         ],
 
