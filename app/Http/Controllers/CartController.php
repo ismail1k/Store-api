@@ -18,14 +18,11 @@ class CartController extends Controller
             foreach(Checkout::findById((string)$request['cart'])->getCart()->items as $item){
                 $product = Product::whereId($item->purchaseable_id)->first();
                 array_push($cart['items'], [
-                    'id' => $product->id,
                     'item_id' => $item->id,
-                    'name' => $product->name,
-                    'description' => $product->short_description,
-                    'price' => $item->price,
                     'unit_price' => $item->unit_price,
-                    'quantity' => $item->qty,
-                ]);
+                    'price' => $item->price,
+                    'quantity' => $item->qty
+                ]+(array)ProductController::get($product->id));
             }
             return response()->json($cart);
         }
@@ -52,8 +49,7 @@ class CartController extends Controller
     }
 
     public function removeFromCart(Request $request){
-        $cart = Checkout::findById($request['cart']);
-        if($cart){
+        if($cart = Checkout::findById($request['cart'])){
             $cart->removeItem($request['item_id']);
             return response()->json(['status' => 200]);
         }

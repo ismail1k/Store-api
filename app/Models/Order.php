@@ -11,13 +11,13 @@ class Order extends Model
     protected $table = 'orders';
     
     protected $fillable = [
-        'id',
         'cart_id',
         'user_id',
         'fullname',
         'address',
         'phone',
         'payment_method',
+        'transaction_id',
         'note',
         'state',
     ];

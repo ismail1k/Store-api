@@ -12,18 +12,19 @@ use Auth;
 
 class OrderController extends Controller
 {
-    private static function get($order_id){
+    public static function get($order_id){
         if($order = Order::whereId($order_id)->first()){
             $cart = [
                 'id' => Checkout::findById($order->cart_id)->getCart()->id,
                 'items' => [],
             ];
             foreach(Checkout::findById($order->cart_id)->getCart()->items as $item){
-                $product = Product::whereId($item->id)->first();
+                $product = Product::whereId($item->purchaseable_id)->first();
                 array_push($cart['items'], [
                     'id' => $item->id,
                     'name' => $product->name,
                     'description' => $product->short_description,
+                    'type' => $product->inventory->digital?'Digital': 'Physical',
                     'price' => $item->price,
                     'unit_price' => $item->unit_price,
                     'quantity' => $item->qty,
@@ -75,7 +76,7 @@ class OrderController extends Controller
         if(Auth::check()){
             if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'order_edit')){
                 if(Order::whereId($request['order_id'])->first()){
-                    Order::whereId($request['order_id'])->update($request->except('token', 'order_id', 'cart_id'));
+                    Order::whereId($request['order_id'])->update($request->except('token', 'order_id', 'cart_id', 'payment_method'));
                     return response()->json(['status' => 200]);
                 }
                 return response()->json(['status' => 404]);
@@ -87,15 +88,12 @@ class OrderController extends Controller
 
     public function new(Request $request){
         $cart = Checkout::findById((string)$request['cart_id']);
-        $user = User::whereId($request['user_id'])->first();
+        $user = Auth::check()?User::whereId(Auth::user()->id)->first():null;
         $fullname = $request['fullname'];
         $payment_method = $request['payment_method'];
         $address = $request['address'];
         $phone = $request['phone'];
         $note = $request['note'];
-        if(!$payment_method){
-            return response()->json(['status' => 500, 'message' => 'Bad Payment Method']);
-        }
         if(strlen($phone) < 8 || strlen($phone) > 13){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
@@ -109,12 +107,14 @@ class OrderController extends Controller
             'cart_id' => $request['cart_id'],
             'user_id' => $user?$user->id:null,
             'fullname' => $fullname,
-            'address' => $address,
             'phone' => $phone,
-            'payment_method' => $payment_method,
+            'address' => $address,
             'note' => $note,
         ])->id;
-        return response()->json(['status' => 200, 'order_id' => $order_id]);
+        return response()->json([
+            'status' => 200,
+            'order_id' => $order_id,
+        ]);
     }
 
     public function remove(Request $request){

@@ -20,9 +20,11 @@ class CreateOrdersTable extends Migration
             $table->string('fullname');
             $table->string('address');
             $table->string('phone');
-            $table->string('payment_method');
             $table->string('note')->nullable();
             $table->integer('state')->default(1);
+            $table->string('payment_method')->nullable();
+            $table->unsignedBigInteger('transaction_id')->nullable()->default(null);
+            $table->foreign('transaction_id')->references('id')->on('transactions');
             $table->timestamps();
         });
     }
@@ -34,6 +36,10 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropForeign('orders_transaction_id_foreign');
+            $table->dropColumn('transaction_id');
+        });
         Schema::dropIfExists('orders');
     }
 }

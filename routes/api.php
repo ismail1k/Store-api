@@ -94,6 +94,12 @@ Route::group(['prefix'=>'order', 'as'=>'order'], function(){
     Route::post('/edit', [App\Http\Controllers\OrderController::class, 'edit'])->name('edit');
     Route::post('/remove', [App\Http\Controllers\OrderController::class, 'remove'])->name('remove');
 });
+Route::group(['prefix'=>'payment', 'as'=>'payment'], function(){
+    Route::get('/paypal', [App\Http\Controllers\PaymentController::class, 'paypal'])->name('paypal');
+    Route::get('/paypal/execute', [App\Http\Controllers\PaymentController::class, 'execute'])->name('paypal.execute');
+    // Route::get('/cod', [App\Http\Controllers\PaymentController::class, 'cod'])->name('cod');
+    // Route::get('/cc', [App\Http\Controllers\PaymentController::class, 'cc'])->name('cc');
+});
 
 // Route::group(['prefix'=>'checkout', 'as'=>'checkout'], function(){
 //     Route::post('', [App\Http\Controllers\Checkout\CheckoutController::class, 'store'])->name('checkout.store');
