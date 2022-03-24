@@ -59,13 +59,6 @@ class ConfigController extends Controller
         return response()->json(['status' => 401]);
     }
 
-    public function load(){
-        $response = [
-            'currency' => 'MAD',
-        ];
-        return response()->json($response);
-    }
-
     public function new(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'settings_new')){
@@ -88,12 +81,11 @@ class ConfigController extends Controller
     }
 
     public function view(Request $request){
-        $key = lib::filter($request['key']);
-        if(empty($key)){
+        if(empty($request['key'])){
             return response()->json(['status' => 500, 'message' => 'Bad credentials']);
         }
-        if(self::check($key)){
-            return response()->json(self::get($key));
+        if(self::check($request['key'])){
+            return response()->json(self::get($request['key']));
         }
         return response()->json(['status' => 404]);
     }
