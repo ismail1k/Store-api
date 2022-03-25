@@ -152,6 +152,7 @@ class InventoryController extends Controller
                             'value' => $value,
                             'valid' => true,
                         ]);
+                        Inventory::whereId($inventory_id)->update(['quantity' => $inventory->quantity+1]);
                     }
                     return response()->json(['status' => 200]);
                 }
@@ -165,10 +166,10 @@ class InventoryController extends Controller
     public function descrement(Request $request){
         if(Auth::check()){
             if(Auth::user()->role >= 3 || lib::access(Auth::user()->id, 'inventory_descrement')){
-                $sku_id = lib::filter($request['sku_id']);
-                $sku = Sku::whereId($sku_id)->first();
+                $sku = Sku::whereId($request['sku_id'])->first();
                 if($sku){
-                    Sku::whereId($sku_id)->delete();
+                    Sku::whereId($request['sku_id'])->delete();
+                    Inventory::whereId($sku->inventory->id)->update(['quantity' => $sku->inventory->quantity-1]);
                     return response()->json(['status' => 200]);
                 }
                 return response()->json(['status' => 404]);

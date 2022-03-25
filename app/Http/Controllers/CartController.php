@@ -41,6 +41,9 @@ class CartController extends Controller
         if($product){
             $cart = Checkout::findById((string)$request['cart']);
             if($cart){
+                if($product->inventory->quantity < $quantity){
+                    return response()->json(['status' => 500, 'message' => 'Unavailable Quantity']);
+                }
                 $cart->addItem($product, $quantity, $product->price-$product->discount);
                 return response()->json(['status' => 200]);
             }

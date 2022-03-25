@@ -6,30 +6,13 @@ use Illuminate\Http\Request;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Yab\ShoppingCart\Checkout;
 use App\Models\Product;
+use App\Models\Inventory;
+use App\Models\Sku;
 use App\Models\Order;
 
 
 class PaypalPaymentProcessor extends Controller
 {
-    private static function onSuccess($order_id){
-        Order::whereId($order_id)->update(['payment_method' => 'paypal']);
-        $cart = Checkout::findById($order_id)->getCart();
-        foreach($cart->items as $item){
-            $product = Product::whereId($item->purchaseable_id)->first();
-            $inventory = Inventory::whereId($product->inventory->id)->first();
-            Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->qty]);
-            if($inventory->digital == false){
-                //Physical Inventory
-
-            }
-            if($inventory->digital == true){
-                //Digital Inventory 
-
-            }
-        }
-        return false;
-    }
-
     private static function order($order_id){
         if($order = Order::whereId($order_id)->first()){
             $items = [];
@@ -63,6 +46,21 @@ class PaypalPaymentProcessor extends Controller
             if($order->payment_method){
                 return response()->json(['status' => 200, 'message' => 'Already paid']);
             }
+            if(!count($order->items)){
+                return response()->json(['status' => 500, 'message' => 'Empty cart']);
+            }
+            foreach($order->items as $i){
+                $product = Product::whereId($i->id)->first();
+                if(!$product->available){
+                    return response()->json(['status' => 500, 'message' => 'Unavailable Product']);
+                }
+                if($i->quantity > $product->inventory->quantity){
+                    return response()->json([
+                        'status' => 500,
+                        'message' => 'Unavailable Quantity',
+                    ]);
+                }
+            }
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
             $provider->setAccessToken($provider->getAccessToken());
@@ -77,9 +75,10 @@ class PaypalPaymentProcessor extends Controller
             ];
             foreach($order->items as $item){
                 array_push($data['purchase_units'], [
-                    "amount" => [
-                        "currency_code" => "USD",
-                        "value" => $item->price*$item->quantity,
+                    'reference_id' => $item->id,
+                    'amount' => [
+                        'currency_code' => 'USD',
+                        'value' => $item->price*$item->quantity,
                     ],
                 ]);
             }
@@ -107,15 +106,39 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public function return(Request $request){
+        $token = $request['token'];
+        return "You can close this window now.";
+    }
+
+    public function execute(Request $request){
         if($order = Order::where('transaction_id', $request['token'])->first()){
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
             $provider->setAccessToken($provider->getAccessToken());
             $response = $provider->capturePaymentOrder($request['token']);
             if(isset($response['status']) && $response['status'] == 'COMPLETED'){
-                self::onSuccess($order->id);
+                $order = Order::where('transaction_id', $response['id'])->first();
+                $cart = Checkout::findById($order->cart_id);
+                Order::where('transaction_id', $response['id'])->update(['payment_method' => 'paypal']);
+                $keys = [];
+                foreach($cart->getCart()->items as $item){
+                    $product = Product::whereId($item->purchaseable_id)->first();
+                    $inventory = Inventory::whereId($product->inventory->id)->first();
+                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->qty]);
+                    if($inventory->digital == true){
+                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->qty) as $key){
+                            Sku::whereId($key->id)->update(['valid' => false]);
+                            array_push($keys, [
+                                'name' => $product->name,
+                                'key' => $key->value,
+                            ]);
+                        }
+                    }
+                    $cart->removeItem($item->id);
+                }
                 return response()->json([
                     'status' => 200,
+                    'keys' => $keys
                 ]);
             }
             return response()->json([
