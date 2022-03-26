@@ -106,8 +106,33 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public function return(Request $request){
-        $token = $request['token'];
-        return "You can close this window now.";
+        if($order = Order::where('transaction_id', $request['token'])->first()){
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->setAccessToken($provider->getAccessToken());
+            $response = $provider->capturePaymentOrder($request['token']);
+            if(isset($response['status']) && $response['status'] == 'COMPLETED'){
+                $order = Order::where('transaction_id', $response['id'])->first();
+                $cart = Checkout::findById($order->cart_id);
+                Order::where('transaction_id', $response['id'])->update(['payment_method' => 'paypal']);
+                foreach($cart->getCart()->items as $item){
+                    $product = Product::whereId($item->purchaseable_id)->first();
+                    $inventory = Inventory::whereId($product->inventory->id)->first();
+                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->qty]);
+                    if($inventory->digital == true){
+                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->qty) as $key){
+                            Sku::whereId($key->id)->update(['valid' => false]);
+                        }
+                    }
+                    $cart->removeItem($item->id);
+                }
+                return view('close');
+            }
+            return response()->json([
+                'status' => 500,
+            ]);
+        }
+        return response()->json(['status' => 404]);
     }
 
     public function execute(Request $request){

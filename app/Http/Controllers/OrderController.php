@@ -60,16 +60,20 @@ class OrderController extends Controller
     }
 
     public function view(Request $request){
-        if(Auth::check()){
-            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'order_view')){
-                if($order = self::get($request['order_id'])){
+        if($order = self::get($request['order_id'])){
+            if($order['user'] == null){
+                return response()->json($order);
+            }
+            if(Auth::check()){
+                if($order['user']['id'] == Auth::user()->id){
                     return response()->json($order);
                 }
-                return response()->json(['status' => 404]);
+                if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'order_view')){
+                    return response()->json($order);
+                }
             }
-            return response()->json(['status' => 403]);
         }
-        return response()->json(['status' => 401]);
+        return response()->json(['status' => 404]);
     }
 
     public function edit(Request $request){
