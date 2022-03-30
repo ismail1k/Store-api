@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e16ab2de284ff1a1fb467dd39306a5c",
+    "content-hash": "e531643d2d8b9c3e1b15c7be70cda90e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1852,62 +1852,6 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2022-02-08T15:44:51+00:00"
-        },
-        {
-            "name": "laravel/legacy-factories",
-            "version": "v1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/legacy-factories.git",
-                "reference": "5edc7e7eb76e7b4b29221f32139bcbf806c8870f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/legacy-factories/zipball/5edc7e7eb76e7b4b29221f32139bcbf806c8870f",
-                "reference": "5edc7e7eb76e7b4b29221f32139bcbf806c8870f",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/macroable": "^8.0|^9.0",
-                "php": "^7.3|^8.0",
-                "symfony/finder": "^3.4|^4.0|^5.0|^6.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Illuminate\\Database\\Eloquent\\LegacyFactoryServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "helpers.php"
-                ],
-                "psr-4": {
-                    "Illuminate\\Database\\Eloquent\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The legacy version of the Laravel Eloquent factories.",
-            "homepage": "http://laravel.com",
-            "support": {
-                "issues": "https://github.com/laravel/framework/issues",
-                "source": "https://github.com/laravel/framework"
-            },
-            "time": "2022-01-13T08:45:08+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -7554,137 +7498,6 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.10.0"
             },
             "time": "2021-03-09T10:59:23+00:00"
-        },
-        {
-            "name": "yabhq/laravel-cart",
-            "version": "v0.20",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yabhq/laravel-cart.git",
-                "reference": "c243e76de40e219b4d06385bea8591365494dfc1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yabhq/laravel-cart/zipball/c243e76de40e219b4d06385bea8591365494dfc1",
-                "reference": "c243e76de40e219b4d06385bea8591365494dfc1",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^8.0",
-                "php": "^8.0",
-                "yabhq/laravel-mint": "0.*"
-            },
-            "require-dev": {
-                "laravel/legacy-factories": "^1.0.4",
-                "orchestra/testbench": "^6.0",
-                "phpunit/phpunit": "^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Yab\\ShoppingCart\\ShoppingCartServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Yab\\ShoppingCart\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim",
-                    "email": "jimhlad@gmail.com"
-                },
-                {
-                    "name": "Chris",
-                    "email": "chris@chrisblackwell.me"
-                }
-            ],
-            "description": "Shopping cart API powered by Laravel",
-            "homepage": "https://github.com/yabhq/laravel-cart",
-            "keywords": [
-                "cart",
-                "laravel",
-                "shoppingcart"
-            ],
-            "support": {
-                "issues": "https://github.com/yabhq/laravel-cart/issues",
-                "source": "https://github.com/yabhq/laravel-cart/tree/v0.20"
-            },
-            "time": "2021-11-04T15:21:41+00:00"
-        },
-        {
-            "name": "yabhq/laravel-mint",
-            "version": "v0.20.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yabhq/laravel-mint.git",
-                "reference": "68d9d21e186da6822d7d39b1246b80cefdd92133"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yabhq/laravel-mint/zipball/68d9d21e186da6822d7d39b1246b80cefdd92133",
-                "reference": "68d9d21e186da6822d7d39b1246b80cefdd92133",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^8.0",
-                "laravel/legacy-factories": "^1.0",
-                "php": "^7.3|^8.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.0",
-                "phpunit/phpunit": "^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Yab\\Mint\\MintServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Yab\\Mint\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jim",
-                    "email": "jimhlad@gmail.com"
-                },
-                {
-                    "name": "Chris",
-                    "email": "chris@chrisblackwell.me"
-                }
-            ],
-            "description": "A collection of traits, macros and other helpers to keep your Laravel app feeling fresh.",
-            "homepage": "https://github.com/yabhq/laravel-mint",
-            "keywords": [
-                "helpers",
-                "laravel",
-                "macros",
-                "mint",
-                "traits",
-                "yab",
-                "yabhq"
-            ],
-            "support": {
-                "issues": "https://github.com/yabhq/laravel-mint/issues",
-                "source": "https://github.com/yabhq/laravel-mint/tree/v0.20.0"
-            },
-            "time": "2022-01-12T21:07:52+00:00"
         }
     ],
     "packages-dev": [
@@ -8088,6 +7901,58 @@
                 "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.0.1"
             },
             "time": "2020-07-09T08:09:16+00:00"
+        },
+        {
+            "name": "ismail1k/laravel-api-cart",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ismail1k/laravel-api-cart.git",
+                "reference": "0cfe8292652ae11d5327d9e92deb92c495f9ea04"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ismail1k/laravel-api-cart/zipball/0cfe8292652ae11d5327d9e92deb92c495f9ea04",
+                "reference": "0cfe8292652ae11d5327d9e92deb92c495f9ea04",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ismail1k\\LaravelApiCart\\ServiceProvider"
+                    ],
+                    "aliases": {
+                        "Cart": "Ismail1k\\LaravelApiCart\\Facades\\CartFacade",
+                        "Wishlist": "Ismail1k\\LaravelApiCart\\Facades\\WishlistFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ismail1k\\LaravelApiCart\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ismail1k",
+                    "email": "oneigcy@gmail.com"
+                }
+            ],
+            "description": "A simple laravel shopping cart for e-commerce store, Compatible with laravel api.",
+            "support": {
+                "issues": "https://github.com/ismail1k/laravel-api-cart/issues",
+                "source": "https://github.com/ismail1k/laravel-api-cart/tree/master"
+            },
+            "time": "2022-03-27T23:26:25+00:00"
         },
         {
             "name": "laravel/sail",
@@ -10142,7 +10007,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "ismail1k/laravel-api-cart": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

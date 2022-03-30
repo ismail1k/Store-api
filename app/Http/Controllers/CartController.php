@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use Yab\ShoppingCart\Checkout;
 use Auth;
 
 class CartController extends Controller
@@ -30,8 +29,10 @@ class CartController extends Controller
     }
 
     public function create(Request $request){
-        $cart = Checkout::create();
-        return response()->json(['cart' => $cart->id()]);
+        return response()->json([
+            'Cart' => Cart::get(),
+            'Wishlist' => Wishlist::get(),
+        ]);
     }
 
     public function addToCart(Request $request){
