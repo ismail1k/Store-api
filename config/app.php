@@ -230,8 +230,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Cart' => Ismail1k\LaravelApiCart\CartServiceProvider::class,
-        'Wishlist' => Ismail1k\LaravelApiCart\Facades\CartFacade::class,
 
     ],
 

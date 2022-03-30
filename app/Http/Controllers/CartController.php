@@ -31,7 +31,7 @@ class CartController extends Controller
     public function create(Request $request){
         return response()->json([
             'Cart' => Cart::get(),
-            'Wishlist' => Wishlist::get(),
+            'Wishlist' => Wishlist::get('iuhjuhukjh'),
         ]);
     }
 
