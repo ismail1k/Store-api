@@ -4,12 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Yab\ShoppingCart\Traits\Purchaseable;
-use Yab\ShoppingCart\Contracts\Purchaseable as PurchaseableInterface;
 
-class Product extends Model implements PurchaseableInterface
+class Product extends Model
 {
-    use HasFactory, Purchaseable;
+    use HasFactory;
 
     protected $table = 'products';
     protected $fillable = [

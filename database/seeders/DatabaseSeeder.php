@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             MediaSeeder::class,
             ProductSeeder::class,
             PermissionSeeder::class,
-            OrderSeeder::class,
+            // OrderSeeder::class,
         ]);
     }
 }
