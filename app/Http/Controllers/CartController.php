@@ -4,23 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Cart;
+use Wishlist;
 use Auth;
 
 class CartController extends Controller
 {
-    public function all(Request $request){
-        if(Checkout::findById((string)$request['cart'])){
+    public function view(Request $request){
+        if(Cart::get($request['cart_id'])){
             $cart = [
-                'id' => Checkout::findById((string)$request['cart'])->getCart()->id,
+                'id' => Cart::get($request['cart_id'])->id,
                 'items' => [],
             ];
-            foreach(Checkout::findById((string)$request['cart'])->getCart()->items as $item){
-                $product = Product::whereId($item->purchaseable_id)->first();
+            foreach(Cart::get($request['cart_id'])->items as $item){
+                $product = Product::whereId($item->id)->first();
                 array_push($cart['items'], [
-                    'item_id' => $item->id,
-                    'unit_price' => $item->unit_price,
-                    'price' => $item->price,
-                    'quantity' => $item->qty
+                    'item_id' => $item->item_id,
+                    'quantity' => $item->quantity,
                 ]+(array)ProductController::get($product->id));
             }
             return response()->json($cart);
@@ -30,38 +30,35 @@ class CartController extends Controller
 
     public function create(Request $request){
         return response()->json([
-            'Cart' => Cart::get(),
-            'Wishlist' => Wishlist::get('iuhjuhukjh'),
+            'cart_id' => Cart::create(Auth::check()?Auth::user()->id:null),
         ]);
     }
 
     public function addToCart(Request $request){
-        $product_id = lib::filter($request['product_id']);
-        $quantity = lib::filter($request['quantity']);
-        $product = Product::whereId($product_id)->first();
-        if($product){
-            $cart = Checkout::findById((string)$request['cart']);
-            if($cart){
-                if($product->inventory->quantity < $quantity){
-                    return response()->json(['status' => 500, 'message' => 'Unavailable Quantity']);
+        if($product = Product::whereId($request['product_id'])->where('available', true)->first()){
+            if($cart = Cart::get($request['cart_id'])){
+                if($product->inventory->quantity >= $request['quantity']){
+                    Cart::add($cart->id, $product->id, $request['quantity']);
+                    return response()->json(['status' => 200]);
                 }
-                $cart->addItem($product, $quantity, $product->price-$product->discount);
-                return response()->json(['status' => 200]);
+                return response()->json(['status' => 500, 'message' => 'Unavailable Quantity']);
             }
         }
         return response()->json(['status' => 404]);
     }
 
     public function removeFromCart(Request $request){
-        if($cart = Checkout::findById($request['cart'])){
-            $cart->removeItem($request['item_id']);
+        if(Cart::get($request['cart_id'])){
+            Cart::removeItem($request['item_id']);
             return response()->json(['status' => 200]);
         }
         return response()->json(['status' => 404]);
     }
 
     public function clear(Request $request){
-        @Checkout::findById((string)$request['cart'])->destroy();
+        if($cart = Cart::get($request['cart_id'])){
+            Cart::destroy($cart->id);
+        }
         return response()->json(['status' => 200]);
     }
 }

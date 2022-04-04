@@ -80,8 +80,8 @@ Route::group(['prefix'=>'product', 'as'=>'product.'], function(){
     Route::get('/remove', [App\Http\Controllers\ProductController::class, 'remove'])->name('remove');
 });
 Route::group(['prefix'=>'cart', 'as'=>'cart.'], function(){
-    Route::get('/', [App\Http\Controllers\CartController::class, 'all'])->name('all');
-    Route::post('/create', [App\Http\Controllers\CartController::class, 'create'])->name('create');
+    Route::get('/', [App\Http\Controllers\CartController::class, 'view'])->name('view');
+    Route::get('/create', [App\Http\Controllers\CartController::class, 'create'])->name('create');
     Route::post('/addToCart', [App\Http\Controllers\CartController::class, 'addToCart'])->name('addToCart');
     Route::post('/removeFromCart', [App\Http\Controllers\CartController::class, 'removeFromCart'])->name('removeFromCart');
     Route::get('/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('clear');
