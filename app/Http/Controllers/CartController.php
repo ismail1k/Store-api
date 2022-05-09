@@ -57,7 +57,7 @@ class CartController extends Controller
 
     public function clear(Request $request){
         if($cart = Cart::get($request['cart_id'])){
-            Cart::destroy($cart->id);
+            Cart::clear($cart->id);
         }
         return response()->json(['status' => 200]);
     }

@@ -1312,12 +1312,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ismail1k/laravel-cart.git",
-                "reference": "f668bc2107bd6d53f4f9741e3556ddfda90ceeb4"
+                "reference": "5ff28d5f337dcfd98b41824103a78f9270f7b25f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ismail1k/laravel-cart/zipball/f668bc2107bd6d53f4f9741e3556ddfda90ceeb4",
-                "reference": "f668bc2107bd6d53f4f9741e3556ddfda90ceeb4",
+                "url": "https://api.github.com/repos/ismail1k/laravel-cart/zipball/5ff28d5f337dcfd98b41824103a78f9270f7b25f",
+                "reference": "5ff28d5f337dcfd98b41824103a78f9270f7b25f",
                 "shasum": ""
             },
             "require": {
@@ -1356,7 +1356,7 @@
                 "issues": "https://github.com/ismail1k/laravel-cart/issues",
                 "source": "https://github.com/ismail1k/laravel-cart/tree/master"
             },
-            "time": "2022-03-30T22:47:18+00:00"
+            "time": "2022-04-04T19:31:49+00:00"
         },
         {
             "name": "laravel/framework",
@@ -8777,5 +8777,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
