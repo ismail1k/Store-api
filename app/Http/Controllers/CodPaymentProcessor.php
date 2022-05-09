@@ -38,6 +38,6 @@ class CodPaymentProcessor extends Controller
 
     public function init(Request $request){
         
-        return false;
+        return true;
     }
 }

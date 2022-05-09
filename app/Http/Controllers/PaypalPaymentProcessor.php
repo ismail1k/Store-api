@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Yab\ShoppingCart\Checkout;
 use App\Models\Product;
 use App\Models\Inventory;
 use App\Models\Sku;
 use App\Models\Order;
+use Cart;
 
 
 class PaypalPaymentProcessor extends Controller
@@ -17,8 +17,8 @@ class PaypalPaymentProcessor extends Controller
         if($order = Order::whereId($order_id)->first()){
             $items = [];
             $total = 0;
-            foreach(Checkout::findById($order->cart_id)->getCart()->items as $item){
-                if($product = Product::whereId($item->purchaseable_id)->first()){
+            foreach(Cart::get($order->cart_id)->items as $item){
+                if($product = Product::whereId($item->id)->first()){
                     $total += $product->price-$product->discount;
                     array_push($items, (object)[
                         'id' => $product->id,
@@ -26,7 +26,7 @@ class PaypalPaymentProcessor extends Controller
                         'description' => $product->short_description,
                         'type' => $product->inventory->digital?'Digital': 'Physical',
                         'price' => $product->price-$product->discount,
-                        'quantity' => $item->qty,
+                        'quantity' => $item->quantity,
                     ]);
                 }
             }
@@ -113,18 +113,17 @@ class PaypalPaymentProcessor extends Controller
             $response = $provider->capturePaymentOrder($request['token']);
             if(isset($response['status']) && $response['status'] == 'COMPLETED'){
                 $order = Order::where('transaction_id', $response['id'])->first();
-                $cart = Checkout::findById($order->cart_id);
                 Order::where('transaction_id', $response['id'])->update(['payment_method' => 'paypal']);
-                foreach($cart->getCart()->items as $item){
-                    $product = Product::whereId($item->purchaseable_id)->first();
+                foreach(Cart::get($order->cart_id)->items as $item){
+                    $product = Product::whereId($item->id)->first();
                     $inventory = Inventory::whereId($product->inventory->id)->first();
-                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->qty]);
+                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->quantity]);
                     if($inventory->digital == true){
-                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->qty) as $key){
+                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->quantity) as $key){
                             Sku::whereId($key->id)->update(['valid' => false]);
                         }
                     }
-                    $cart->removeItem($item->id);
+                    Cart::removeItem($item->id);
                 }
                 return view('close');
             }

@@ -100,10 +100,10 @@ Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
         Route::post('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
         Route::get('/cancel', [App\Http\Controllers\PaypalPaymentProcessor::class, 'cancel'])->name('cancel');
     });
-    // Route::group(['prefix'=>'cod', 'as'=>'cod'], function(){
-    //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
-    //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
-    // });
+    Route::group(['prefix'=>'cod', 'as'=>'cod'], function(){
+        Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
+        Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
+    });
     // Route::group(['prefix'=>'cc', 'as'=>'cc'], function(){
     //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
     //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
