@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Yab\ShoppingCart\Checkout;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\User;
+use Cart;
 use Auth;
 
 class OrderController extends Controller
@@ -15,19 +15,19 @@ class OrderController extends Controller
     public static function get($order_id){
         if($order = Order::whereId($order_id)->first()){
             $cart = [
-                'id' => Checkout::findById($order->cart_id)->getCart()->id,
+                'id' => Cart::get($order->cart_id)->id,
                 'items' => [],
             ];
-            foreach(Checkout::findById($order->cart_id)->getCart()->items as $item){
-                $product = Product::whereId($item->purchaseable_id)->first();
+            foreach(Cart::get($order->cart_id)->items as $item){
+                $product = Product::whereId($item->id)->first();
                 array_push($cart['items'], [
                     'id' => $item->id,
                     'name' => $product->name,
                     'description' => $product->short_description,
                     'type' => $product->inventory->digital?'Digital': 'Physical',
-                    'price' => $item->price,
                     'unit_price' => $item->unit_price,
-                    'quantity' => $item->qty,
+                    'quantity' => $item->quantity,
+                    'price' => $item->unit_price * $item->quantity,
                 ]);
             }
             return [
@@ -91,7 +91,6 @@ class OrderController extends Controller
     }
 
     public function new(Request $request){
-        $cart = Checkout::findById((string)$request['cart_id']);
         $user = Auth::check()?User::whereId(Auth::user()->id)->first():null;
         $fullname = $request['fullname'];
         $payment_method = $request['payment_method'];
@@ -106,6 +105,9 @@ class OrderController extends Controller
         }
         if(!$address){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
+        }
+        if(!count(Cart::get($request['cart_id'])->items)){
+            return response()->json(['status' => 500, 'message' => 'Empty cart']);
         }
         $order_id = Order::create([
             'cart_id' => $request['cart_id'],
