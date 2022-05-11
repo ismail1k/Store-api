@@ -101,22 +101,11 @@ Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
         Route::get('/cancel', [App\Http\Controllers\PaypalPaymentProcessor::class, 'cancel'])->name('cancel');
     });
     Route::group(['prefix'=>'cod', 'as'=>'cod'], function(){
-        Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
-        Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
+        Route::get('', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'init'])->name('init');
+        Route::get('/execute', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'execute'])->name('execute');
     });
     // Route::group(['prefix'=>'cc', 'as'=>'cc'], function(){
     //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
     //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
     // });
 });
-
-// Route::group(['prefix'=>'checkout', 'as'=>'checkout'], function(){
-//     Route::post('', [App\Http\Controllers\Checkout\CheckoutController::class, 'store'])->name('checkout.store');
-//     Route::get('{checkout}', [App\Http\Controllers\Checkout\CheckoutController::class, 'show'])->name('checkout.show');
-//     Route::put('{checkout}', [App\Http\Controllers\Checkout\CheckoutController::class, 'update'])->name('checkout.update');
-//     Route::delete('{checkout}', [App\Http\Controllers\Checkout\CheckoutController::class, 'destroy'])->name('checkout.destroy');
-//     Route::post('{checkout}/items', [App\Http\Controllers\Checkout\CheckoutItemController::class, 'store'])->name('checkout.items.store');
-//     Route::put('{checkout}/items/{itemId}', [App\Http\Controllers\Checkout\CheckoutItemController::class, 'update'])->name('checkout.items.update');
-//     Route::delete('{checkout}/items/{itemId}', [App\Http\Controllers\Checkout\CheckoutItemController::class, 'destroy'])->name('checkout.items.destroy');
-//     Route::post('{checkout}/discount', [App\Http\Controllers\Checkout\CheckoutDiscountController::class, 'store'])->name('checkout.discount');
-// });

@@ -173,6 +173,6 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public function cancel(){
-        return response()->json(['status' => 200]);
+        return view('close');
     }
 }

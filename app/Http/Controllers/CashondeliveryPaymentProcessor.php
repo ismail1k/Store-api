@@ -21,7 +21,7 @@ class CodPaymentProcessor extends Controller
                         'description' => $product->short_description,
                         'type' => $product->inventory->digital?'Digital': 'Physical',
                         'price' => $product->price-$product->discount,
-                        'quantity' => $item->qty,
+                        'quantity' => $item->quantity,
                     ]);
                 }
             }
