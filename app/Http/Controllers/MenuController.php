@@ -45,6 +45,12 @@ class MenuController extends Controller
                 'url' => 'category',
                 'active' => true,
             ],
+            'contact' => [
+                'name' => 'Contact',
+                'icon' => 'envelope',
+                'url' => 'contact',
+                'active' => true,
+            ],
             'customer' => [
                 'name' => 'Customer',
                 'icon' => 'users',
