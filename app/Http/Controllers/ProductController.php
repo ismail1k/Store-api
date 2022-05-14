@@ -49,7 +49,7 @@ class ProductController extends Controller
                 'video' => [],
             ];
             foreach($product->media as $file){
-                $mime_type = strstr(mime_content_type(Storage::path('public\\'.$file->path)), '/', true);
+                $mime_type = strstr(mime_content_type(Storage::path('public/'.$file->path)), '/', true);
                 if($file->primary != 1){
                     if($mime_type == 'image'){
                         array_push($media['image'], [

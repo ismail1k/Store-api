@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Laravel - Store" id="Project-1b2a" database="MySql" >
+	<schema name="laravel - store" >
+		<table name="cart-items" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="cart_id" type="BIGINT" jt="-5" />
+			<column name="product_id" type="BIGINT" jt="-5" />
+			<column name="quantity" type="INT" jt="4" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<index name="idx_cart-items" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_cart-items_carts" to_schema="laravel - store" to_table="carts" >
+				<fk_column name="cart_id" pk="id" />
+			</fk>
+			<fk name="fk_cart-items_products" to_schema="laravel - store" to_table="products" >
+				<fk_column name="product_id" pk="id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="carts" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="user_id" type="INT" jt="4" />
+			<column name="type" type="VARCHAR" length="16" jt="12" >
+				<defo><![CDATA['cart']]></defo>
+			</column>
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_DATE]]></type_options>
+			</column>
+			<index name="idx_carts" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="categories" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_DATE]]></type_options>
+			</column>
+			<index name="idx_categories" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_categories" to_schema="laravel - store" to_table="products" >
+				<fk_column name="id" pk="category_id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="configs" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="key" type="INT" jt="4" mandatory="y" />
+			<column name="value" type="VARCHAR" length="100" jt="12" />
+			<column name="created_by" type="INT" jt="4" mandatory="y" />
+			<column name="updated_by" type="INT" jt="4" mandatory="y" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<index name="idx_configs" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="inventories" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="digital" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="quantity" type="INT" jt="4" >
+				<defo><![CDATA[0]]></defo>
+			</column>
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<index name="idx_inventories" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_inventories_products" to_schema="laravel - store" to_table="products" >
+				<fk_column name="id" pk="inventory_id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="media" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" />
+			<column name="path" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="product_id" type="INT" jt="4" mandatory="y" />
+			<column name="primary" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="created_by" type="INT" jt="4" />
+			<column name="updated_by" type="DATE" jt="91" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_DATE]]></type_options>
+			</column>
+			<index name="idx_media" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_media_products" to_schema="laravel - store" to_table="products" >
+				<fk_column name="product_id" pk="id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="orders" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="user_id" type="INT" jt="4" />
+			<column name="cart_id" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="fullname" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="address" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="phone" type="VARCHAR" length="15" jt="12" />
+			<column name="note" type="VARCHAR" length="600" jt="12" />
+			<column name="state" type="INT" jt="4" >
+				<defo><![CDATA[1]]></defo>
+			</column>
+			<column name="payment_method" type="VARCHAR" length="25" jt="12" />
+			<column name="transaction_id" type="VARCHAR" length="25" jt="12" />
+			<index name="idx_orders" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_orders_carts" to_schema="laravel - store" to_table="carts" >
+				<fk_column name="cart_id" pk="id" />
+			</fk>
+			<fk name="fk_orders_users" to_schema="laravel - store" to_table="users" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="products" prior="product" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="short_description" type="LONG VARCHAR" jt="-1" />
+			<column name="description" type="LONG VARCHAR" jt="-1" />
+			<column name="tags" type="VARCHAR" length="255" jt="12" />
+			<column name="price" type="FLOAT" jt="7" mandatory="y" />
+			<column name="discount" type="FLOAT" jt="7" >
+				<defo><![CDATA[0.00]]></defo>
+			</column>
+			<column name="available" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[true]]></defo>
+			</column>
+			<column name="created_by" type="INT" jt="4" />
+			<column name="updated_by" type="INT" jt="4" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<column name="category_id" type="BIGINT" jt="-5" unsigned="y" />
+			<column name="inventory_id" type="INT" jt="4" unsigned="y" />
+			<index name="idx_products" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="idx_products_0" unique="UNIQUE_KEY" >
+				<column name="category_id" />
+			</index>
+			<index name="idx_products_1" unique="UNIQUE_KEY" >
+				<column name="inventory_id" />
+			</index>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="skus" prior="inventory_id" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="value" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="valid" type="BOOLEAN" length="100" jt="16" >
+				<defo><![CDATA[true]]></defo>
+			</column>
+			<column name="inventory_id" type="BIGINT" jt="-5" unsigned="y" />
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<column name="item_id" type="BIGINT" jt="-5" unsigned="y" />
+			<index name="idx_skus" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_skus_users" to_schema="laravel - store" to_table="inventories" >
+				<fk_column name="inventory_id" pk="id" />
+			</fk>
+			<fk name="fk_skus_skus" to_schema="laravel - store" to_table="cart-items" >
+				<fk_column name="item_id" pk="id" />
+			</fk>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+		<table name="users" prior="siy" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="name" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="role" type="INT" jt="4" mandatory="y" >
+				<defo><![CDATA[1]]></defo>
+			</column>
+			<column name="active" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[true]]></defo>
+			</column>
+			<column name="email" type="VARCHAR" length="255" jt="12" mandatory="y" >
+				<type_options><![CDATA[unique]]></type_options>
+			</column>
+			<column name="email_verified_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[nullable]]></type_options>
+			</column>
+			<column name="password" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="phone" type="VARCHAR" length="15" jt="12" >
+				<type_options><![CDATA[nullable]]></type_options>
+			</column>
+			<column name="remember_token" type="VARCHAR" length="100" jt="12" >
+				<type_options><![CDATA[nullable]]></type_options>
+			</column>
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_TIMESTAMP]]></type_options>
+			</column>
+			<index name="idx_users" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<options><![CDATA[engine=InnoDB]]></options>
+		</table>
+	</schema>
+	<layout name="Default Layout" id="Layout-d" show_relation="columns" >
+		<entity schema="laravel - store" name="cart-items" color="C1D8EE" x="384" y="672" />
+		<entity schema="laravel - store" name="carts" color="C1D8EE" x="496" y="672" />
+		<entity schema="laravel - store" name="inventories" color="C1D8EE" x="48" y="672" />
+		<entity schema="laravel - store" name="orders" color="C1D8EE" x="336" y="336" />
+		<entity schema="laravel - store" name="products" color="C1D8EE" x="192" y="336" />
+		<entity schema="laravel - store" name="skus" color="C1D8EE" x="160" y="672" />
+		<entity schema="laravel - store" name="users" color="C1D8EE" x="272" y="48" />
+	</layout>
+</project>

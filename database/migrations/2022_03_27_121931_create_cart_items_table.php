@@ -20,7 +20,12 @@ class CreateCartItemsTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products');
             $table->integer('quantity');
+            $table->boolean('payed')->default(false);
             $table->timestamps();
+        });
+        Schema::table('skus', function (Blueprint $table) {
+            $table->unsignedBigInteger('item_id')->nullable();
+            $table->foreign('item_id')->references('id')->on('cart-items');
         });
     }
 
@@ -31,6 +36,10 @@ class CreateCartItemsTable extends Migration
      */
     public function down()
     {
+        Schema::table('skus', function (Blueprint $table) {
+            $table->dropForeign('skus_item_id_foreign');
+            $table->dropColumn('item_id');
+        });
         Schema::dropIfExists('cart-items');
     }
 }
