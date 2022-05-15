@@ -18,11 +18,14 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix'=>'search', 'as'=>'search.'], function(){
     Route::get('/product', [App\Http\Controllers\SearchController::class, 'product'])->name('product');
 });
-Route::group(['prefix'=>'contact', 'as'=>'contact.'], function(){
-    Route::post('/send', [App\Http\Controllers\ContactController::class, 'send'])->name('send');
-});
 Route::group(['prefix'=>'data', 'as'=>'data.'], function(){
     Route::get('/menu', [App\Http\Controllers\DataController::class, 'menu'])->name('menu');
+});
+Route::group(['prefix'=>'contact', 'as'=>'contact.'], function(){
+    Route::get('/', [App\Http\Controllers\ContactController::class, 'all'])->name('all');
+    Route::get('/view', [App\Http\Controllers\ContactController::class, 'view'])->name('view');
+    Route::post('/send', [App\Http\Controllers\ContactController::class, 'send'])->name('send');
+    Route::post('/remove', [App\Http\Controllers\ContactController::class, 'remove'])->name('remove');
 });
 Route::group(['prefix'=>'auth'], function(){
     Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');

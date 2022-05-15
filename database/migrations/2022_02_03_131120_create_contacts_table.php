@@ -20,6 +20,7 @@ class CreateContactsTable extends Migration
             $table->string('email');
             $table->string('subject');
             $table->longText('message');
+            $table->boolean('read')->default(false);
             $table->string('ip');
             $table->integer('created_by')->nullable();
             $table->timestamps();

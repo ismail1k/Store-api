@@ -22,6 +22,52 @@ class ContactController extends Controller
         return request()->ip();
     }
 
+    public function all(Request $request){
+        if(Auth::check()){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'contact_all')){
+                $response = [];
+                foreach(Contact::all() as $mail){
+                    array_push($response, [
+                        'id' => $mail->id,
+                        'firstname' => $mail->firstname,
+                        'lastname' => $mail->lastname,
+                        'email' => $mail->email,
+                        'read' => $mail->read,
+                        'subject' => $mail->subject,
+                        'created_at' => $mail->created_at,
+                    ]);
+                }
+                return response()->json($response);
+            }
+            return response()->json(['status' => 403]);
+        }
+        return response()->json(['status' => 401]);
+    }
+
+    public function view(Request $request){
+        if(Auth::check()){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'contact_view')){
+                if($mail = Contact::whereId($request['mail_id'])->first()){
+                    Contact::whereId($request['mail_id'])->update(['read' => true]);
+                    $response = [
+                        'id' => $mail->id,
+                        'firstname' => $mail->firstname,
+                        'lastname' => $mail->lastname,
+                        'email' => $mail->email,
+                        'subject' => $mail->subject,
+                        'message' => $mail->message,
+                        'created_by' => $mail->created_by,
+                        'created_at' => $mail->created_at->toDayDateTimeString(),
+                    ];
+                    return response()->json($response);
+                }
+                return response()->json(['status' => 404]);
+            }
+            return response()->json(['status' => 403]);
+        }
+        return response()->json(['status' => 401]);
+    }
+
     public function send(Request $request){
         $fname = lib::filter($request['firstname']);
         $lname = lib::filter($request['lastname']);
@@ -43,5 +89,18 @@ class ContactController extends Controller
             return response()->json(['status' => 200]);
         }
         return response()->json(['status' => 500]);
+    }
+
+    public function remove(Request $request){
+        if(Auth::check()){
+            if((Auth::user()->role >= 3) || lib::access(Auth::user()->id, 'contact_remove')){
+                if(Contact::whereId($request['mail_id'])->delete()){
+                    return response()->json(['status' => 200]);
+                }
+                return response()->json(['status' => 404]);
+            }
+            return response()->json(['status' => 403]);
+        }
+        return response()->json(['status' => 401]);
     }
 }
