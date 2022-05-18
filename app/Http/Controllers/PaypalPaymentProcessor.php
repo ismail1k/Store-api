@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Inventory;
 use App\Models\Sku;
 use App\Models\Order;
+use App\Models\OrderItems;
 use Cart;
 
 
@@ -42,15 +43,15 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public static function init(Request $request){
-        if($order = self::order($request['order_id'])){
-            if($order->payment_method){
+        if($order = Order::whereId($request['order_id'])->first()){
+            if($order->payed){
                 return response()->json(['status' => 200, 'message' => 'Already paid']);
             }
             if(!count($order->items)){
                 return response()->json(['status' => 500, 'message' => 'Empty cart']);
             }
             foreach($order->items as $i){
-                $product = Product::whereId($i->id)->first();
+                $product = Product::whereId($i->product_id)->first();
                 if(!$product->available){
                     return response()->json(['status' => 500, 'message' => 'Unavailable Product']);
                 }
@@ -61,9 +62,6 @@ class PaypalPaymentProcessor extends Controller
                     ]);
                 }
             }
-            $provider = new PayPalClient;
-            $provider->setApiCredentials(config('paypal'));
-            $provider->setAccessToken($provider->getAccessToken());
 
             $data = [
                 'intent' => 'CAPTURE',
@@ -73,16 +71,23 @@ class PaypalPaymentProcessor extends Controller
                     'cancel_url' => route('payment.paypal.cancel'),
                 ]
             ];
-            foreach($order->items as $item){
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $provider->setAccessToken($provider->getAccessToken());
+            $amount = 0;
+            foreach($order->items as $i){
+                $amount += ($product->price-$product->discount)*$product->quantity;
+                $product = Product::whereId($i->product_id)->first();
                 array_push($data['purchase_units'], [
-                    'reference_id' => $item->id,
+                    'reference_id' => $product->id,
                     'amount' => [
                         'currency_code' => 'USD',
-                        'value' => $item->price*$item->quantity,
+                        'value' => ($product->price-$product->discount)*$product->quantity,
                     ],
                 ]);
             }
             $response = $provider->createOrder($data);
+            dd($response);
             if($response['status'] == 'CREATED'){
                 foreach($response['links'] as $link){
                     if($link['rel'] == 'approve'){
@@ -90,9 +95,14 @@ class PaypalPaymentProcessor extends Controller
                     }
                 }
                 if($url){
-                    Order::whereId($order->id)->update([
-                        'transaction_id' => $response['id']
+                    Payment::create([
+                        'order_id' => $order->id,
+                        'reference' => $response['id'],
+                        'amount' => $amount,
+                        'provider' => 'PayPal',
+                        'status' => 1,
                     ]);
+
                 }
             } else {
                 return response()->json(['status' => 500]);
@@ -106,24 +116,23 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public function return(Request $request){
-        if($order = Order::where('transaction_id', $request['token'])->first()){
+        $payment = Payment::where('reference', $request['token'])->first();
+        $order = $payment->order;
+        if($order){
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
             $provider->setAccessToken($provider->getAccessToken());
             $response = $provider->capturePaymentOrder($request['token']);
             if(isset($response['status']) && $response['status'] == 'COMPLETED'){
-                $order = Order::where('transaction_id', $response['id'])->first();
-                Order::where('transaction_id', $response['id'])->update(['payment_method' => 'paypal']);
-                foreach(Cart::get($order->cart_id)->items as $item){
-                    $product = Product::whereId($item->id)->first();
-                    $inventory = Inventory::whereId($product->inventory->id)->first();
-                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->quantity]);
-                    if($inventory->digital == true){
-                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->quantity) as $key){
+                Order::whereId($order->id)->update(['payed' => true]);
+                foreach($order->items as $item){
+                    $product = Product::whereId($item->product_id)->first();
+                    Inventory::whereId($product->inventory->id)->update(['quantity' => $product->inventory->quantity-$item->quantity]);
+                    if($product->inventory->digital == true){
+                        foreach(Sku::where('inventory_id', $product->inventory->id)->where('valid', true)->get()->take($item->quantity) as $key){
                             Sku::whereId($key->id)->update(['valid' => false]);
                         }
                     }
-                    Cart::removeItem($item->id);
                 }
                 return view('close');
             }
