@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\User;
 use Cart;
 use Auth;
+use DB;
 
 class OrderController extends Controller
 {
@@ -92,30 +93,26 @@ class OrderController extends Controller
 
     public function new(Request $request){
         $user = Auth::check()?User::whereId(Auth::user()->id)->first():null;
-        $fullname = $request['fullname'];
-        $payment_method = $request['payment_method'];
-        $address = $request['address'];
-        $phone = $request['phone'];
-        $note = $request['note'];
-        if(strlen($phone) < 8 || strlen($phone) > 13){
+        if(strlen($request['phone']) < 8 || strlen($request['phone']) > 13){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
-        if(!$fullname){
+        if(!$request['fullname']){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
-        if(!$address){
+        if(!$request['address']){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
         if(!count(Cart::get($request['cart_id'])->items)){
             return response()->json(['status' => 500, 'message' => 'Empty cart']);
         }
+        // dd(Product::whereId(1)->first()->inventory->items);
         $order_id = Order::create([
-            'cart_id' => $request['cart_id'],
             'user_id' => $user?$user->id:null,
-            'fullname' => $fullname,
-            'phone' => $phone,
-            'address' => $address,
-            'note' => $note,
+            'cart_id' => $request['cart_id'],
+            'fullname' => $request['fullname'],
+            'phone' => $request['phone'],
+            'address' => $request['address'],
+            'note' => $request['note'],
         ])->id;
         return response()->json([
             'status' => 200,

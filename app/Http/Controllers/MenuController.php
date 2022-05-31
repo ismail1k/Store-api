@@ -9,12 +9,12 @@ class MenuController extends Controller
 {
     public static function get(){
         $menu = [
-            'dashboard' => [
-                'name' => 'Dashboard',
-                'icon' => 'tachometer-alt',
-                'url' => 'dashboard',
-                'active' => true,
-            ],
+            // 'dashboard' => [
+            //     'name' => 'Dashboard',
+            //     'icon' => 'tachometer-alt',
+            //     'url' => 'dashboard',
+            //     'active' => true,
+            // ],
             'order' => [
                 'name' => 'Order',
                 'icon' => 'cart-shopping',

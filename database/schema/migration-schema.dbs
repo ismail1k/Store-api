@@ -130,6 +130,30 @@
 			</fk>
 			<options><![CDATA[engine=InnoDB]]></options>
 		</table>
+		<table name="order-items" prior="table" >
+			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
+				<identity><![CDATA[AUTO_INCREMENT]]></identity>
+			</column>
+			<column name="order_id" type="INT" jt="4" mandatory="y" />
+			<column name="product_id" type="INT" jt="4" mandatory="y" />
+			<column name="quantity" type="INT" jt="4" mandatory="y" />
+			<column name="value" type="VARCHAR" length="100" jt="12" />
+			<column name="refund" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="payed" type="BOOLEAN" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="created_at" type="TIMESTAMP" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<column name="updated_at" type="TIMESTAMP" jt="93" >
+				<type_options><![CDATA[ON UPDATE CURRENT_DATE]]></type_options>
+			</column>
+			<index name="idx_order-items" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
 		<table name="orders" prior="table" >
 			<column name="id" type="INT" jt="4" mandatory="y" unsigned="y" >
 				<identity><![CDATA[AUTO_INCREMENT]]></identity>
@@ -256,12 +280,26 @@
 		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout-d" show_relation="columns" >
-		<entity schema="laravel - store" name="cart-items" color="C1D8EE" x="384" y="672" />
-		<entity schema="laravel - store" name="carts" color="C1D8EE" x="496" y="672" />
-		<entity schema="laravel - store" name="inventories" color="C1D8EE" x="48" y="672" />
-		<entity schema="laravel - store" name="orders" color="C1D8EE" x="336" y="336" />
-		<entity schema="laravel - store" name="products" color="C1D8EE" x="192" y="336" />
-		<entity schema="laravel - store" name="skus" color="C1D8EE" x="160" y="672" />
-		<entity schema="laravel - store" name="users" color="C1D8EE" x="272" y="48" />
+		<entity schema="laravel - store" name="cart-items" color="C1D8EE" x="464" y="368" />
+		<entity schema="laravel - store" name="carts" color="C1D8EE" x="352" y="368" />
+		<entity schema="laravel - store" name="inventories" color="C1D8EE" x="160" y="368" />
+		<entity schema="laravel - store" name="order-items" color="3986C1" x="832" y="368" />
+		<entity schema="laravel - store" name="orders" color="C1D8EE" x="688" y="368" />
+		<entity schema="laravel - store" name="products" color="C1D8EE" x="192" y="48" />
+		<entity schema="laravel - store" name="skus" color="C1D8EE" x="48" y="368" />
+		<entity schema="laravel - store" name="users" color="C1D8EE" x="560" y="48" />
+		<query id="Query-2569" name="order-items" confirmed="y" >
+			<query_table schema="laravel - store" name="order-items" alias="o" x="48" y="48" >
+				<column name="id" />
+				<column name="order_id" />
+				<column name="product_id" />
+				<column name="quantity" />
+				<column name="value" />
+				<column name="refund" />
+				<column name="payed" />
+				<column name="created_at" />
+				<column name="updated_at" />
+			</query_table>
+		</query>
 	</layout>
 </project>

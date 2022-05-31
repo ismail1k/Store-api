@@ -22,8 +22,7 @@ class CreateOrdersTable extends Migration
             $table->string('phone');
             $table->string('note')->nullable();
             $table->integer('state')->default(1);
-            $table->string('payment_method')->nullable();
-            $table->string('transaction_id')->nullable();
+            $table->integer('payment_id')->nullable();
             $table->timestamps();
         });
     }

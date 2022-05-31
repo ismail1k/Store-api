@@ -107,8 +107,4 @@ Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
         Route::get('', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'init'])->name('init');
         Route::get('/execute', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'execute'])->name('execute');
     });
-    // Route::group(['prefix'=>'cc', 'as'=>'cc'], function(){
-    //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
-    //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
-    // });
 });

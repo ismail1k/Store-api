@@ -13,13 +13,13 @@ class DataController extends Controller
         if(Auth::check()){
             if(Auth::user()->role >= 2){
                 $menu = [
-                    'dashboard' => [
-                        'active' => true,
-                        'name' => 'Dashboard',
-                        'icon' => 'tachometer-alt',
-                        'url' => 'dashboard',
-                        'permissions' => ['dashboard_view'],
-                    ],
+                    // 'dashboard' => [
+                    //     'active' => true,
+                    //     'name' => 'Dashboard',
+                    //     'icon' => 'tachometer-alt',
+                    //     'url' => 'dashboard',
+                    //     'permissions' => ['dashboard_view'],
+                    // ],
                     'order' => [
                         'active' => true,
                         'name' => 'Order',

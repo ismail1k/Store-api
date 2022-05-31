@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return "Server running...";
 });
+Route::get('/version', function () {
+    return "1.0.0";
+});

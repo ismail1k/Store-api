@@ -8,8 +8,9 @@ use App\Models\Product;
 use App\Models\Inventory;
 use App\Models\Sku;
 use App\Models\Order;
+use App\Models\Payment;
 use Cart;
-
+use DB;
 
 class PaypalPaymentProcessor extends Controller
 {
@@ -90,8 +91,12 @@ class PaypalPaymentProcessor extends Controller
                     }
                 }
                 if($url){
+                    $payment_id = Payment::create([
+                        'reference' => $response['id'],
+                        'provider' => 'PayPal',
+                    ])->id;
                     Order::whereId($order->id)->update([
-                        'transaction_id' => $response['id']
+                        'payment_id' => $payment_id,
                     ]);
                 }
             } else {
@@ -106,24 +111,52 @@ class PaypalPaymentProcessor extends Controller
     }
 
     public function return(Request $request){
-        if($order = Order::where('transaction_id', $request['token'])->first()){
+        $payment_id = Payment::where('reference', $request['token'])->first()->id;
+        if($order = Order::where('id', $payment_id)->first()){
             $provider = new PayPalClient;
             $provider->setApiCredentials(config('paypal'));
             $provider->setAccessToken($provider->getAccessToken());
             $response = $provider->capturePaymentOrder($request['token']);
+            
             if(isset($response['status']) && $response['status'] == 'COMPLETED'){
-                $order = Order::where('transaction_id', $response['id'])->first();
-                Order::where('transaction_id', $response['id'])->update(['payment_method' => 'paypal']);
+                $payment_id = Payment::where('reference', $request['token'])->first()->id;
+                $order = Order::where('id', $payment_id)->first();
+                $amount = 0;
+                foreach($response['purchase_units'] as $unit){
+                    foreach($unit['payments']['captures'] as $capture){
+                        $amount += $capture['amount']['value'];
+                    }
+                }
+                Payment::where('reference', $request['token'])->update([
+                    'amount' => $amount,
+                    'provider' => 'PayPal',
+                ]);
                 foreach(Cart::get($order->cart_id)->items as $item){
                     $product = Product::whereId($item->id)->first();
-                    $inventory = Inventory::whereId($product->inventory->id)->first();
-                    Inventory::whereId($inventory->id)->update(['quantity' => $inventory->quantity-$item->quantity]);
-                    if($inventory->digital == true){
-                        foreach(Sku::where('inventory_id', $inventory->id)->where('valid', true)->get()->take($item->quantity) as $key){
-                            Sku::whereId($key->id)->update(['valid' => false]);
+                    if($product->available && ($product->inventory->quantity >= $item->quantity)){
+                        $value = null;
+                        if($product->inventory->digital){
+                            foreach($product->inventory->items as $i){
+                                if(!$i->valid){
+                                    $value = $i->value;
+                                    DB::table('skus')->where('id', $i->id)->update([
+                                        'valid' => 1,
+                                    ]);
+                                    return false;
+                                }
+                            }
                         }
+                        DB::table('order-items')->insert([
+                            'order_id' => $order->id,
+                            'product_id' => $item->id,
+                            'quantity' => $item->quantity,
+                            'value' => $value,
+                        ]);
                     }
-                    Cart::removeItem($item->id);
+                    Inventory::whereId($product->inventory->id)->update([
+                        'quantity' => $product->inventory->quantity-$item->quantity,
+                    ]);
+                    Cart::removeItem($item->item_id);
                 }
                 return view('close');
             }
