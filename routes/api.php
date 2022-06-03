@@ -101,8 +101,6 @@ Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
         Route::get('', [App\Http\Controllers\PaymentController::class, 'cash_on_delivery'])->name('cash_on_delivery');
         // Route::get('/execute', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'execute'])->name('execute');
     });
-<<<<<<< HEAD
-=======
     // Route::group(['prefix'=>'paypal', 'as'=>'paypal.'], function(){
     //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
     //     Route::get('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'return'])->name('return');
@@ -113,5 +111,4 @@ Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
     //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
     //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
     // });
->>>>>>> 2cbb7384b421f66802842eb592e720b94e09813d
 });
