@@ -97,14 +97,21 @@ Route::group(['prefix'=>'order', 'as'=>'order.'], function(){
     Route::post('/remove', [App\Http\Controllers\OrderController::class, 'remove'])->name('remove');
 });
 Route::group(['prefix'=>'payment', 'as'=>'payment.'], function(){
-    Route::group(['prefix'=>'paypal', 'as'=>'paypal.'], function(){
-        Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
-        Route::get('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'return'])->name('return');
-        Route::post('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
-        Route::get('/cancel', [App\Http\Controllers\PaypalPaymentProcessor::class, 'cancel'])->name('cancel');
-    });
     Route::group(['prefix'=>'cod', 'as'=>'cod'], function(){
-        Route::get('', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'init'])->name('init');
-        Route::get('/execute', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'execute'])->name('execute');
+        Route::get('', [App\Http\Controllers\PaymentController::class, 'cash_on_delivery'])->name('cash_on_delivery');
+        // Route::get('/execute', [App\Http\Controllers\CashondeliveryPaymentProcessor::class, 'execute'])->name('execute');
     });
+<<<<<<< HEAD
+=======
+    // Route::group(['prefix'=>'paypal', 'as'=>'paypal.'], function(){
+    //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
+    //     Route::get('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'return'])->name('return');
+    //     Route::post('/return', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
+    //     Route::get('/cancel', [App\Http\Controllers\PaypalPaymentProcessor::class, 'cancel'])->name('cancel');
+    // });
+    // Route::group(['prefix'=>'cc', 'as'=>'cc'], function(){
+    //     Route::get('', [App\Http\Controllers\PaypalPaymentProcessor::class, 'init'])->name('init');
+    //     Route::get('/execute', [App\Http\Controllers\PaypalPaymentProcessor::class, 'execute'])->name('execute');
+    // });
+>>>>>>> 2cbb7384b421f66802842eb592e720b94e09813d
 });
