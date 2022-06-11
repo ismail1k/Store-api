@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\OrderItems;
 use App\Models\User;
 use Cart;
 use Auth;
@@ -15,6 +16,7 @@ class OrderController extends Controller
 {
     public static function get($order_id){
         if($order = Order::whereId($order_id)->first()){
+            dd($order->items);
             $cart = [
                 'id' => Cart::get($order->cart_id)->id,
                 'items' => [],
@@ -99,6 +101,9 @@ class OrderController extends Controller
         if(!$request['fullname']){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
+        if(!$request['email']){
+            return response()->json(['status' => 500, 'message' => 'Bad email']);
+        }
         if(!$request['address']){
             return response()->json(['status' => 500, 'message' => 'Bad info']);
         }
@@ -110,6 +115,7 @@ class OrderController extends Controller
             'user_id' => $user?$user->id:null,
             'cart_id' => $request['cart_id'],
             'fullname' => $request['fullname'],
+            'email' => $request['email'],
             'phone' => $request['phone'],
             'address' => $request['address'],
             'note' => $request['note'],
@@ -132,5 +138,21 @@ class OrderController extends Controller
             return response()->json(['status' => 403]);
         }
         return response()->json(['status' => 401]);
+    }
+
+    public static function confirm($order_id){
+        $cart = Cart::get($order_id);
+        $order = Order::whereId($order_id)->first();
+        dd($cart);
+        foreach($order->items as $item){
+            OrderItems::create([
+                'order_id' => $order_id,
+                'product_id' => $item->id,
+                'quantity' => $item->quantity,
+                'payed' => true,
+            ]);
+            Cart::removeItem($item->item_id);
+        }
+        return false;
     }
 }

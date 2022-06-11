@@ -3,12 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-<<<<<<< HEAD
-
-class PaymentController extends Controller
-{
-    //
-=======
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItems;
@@ -28,14 +22,14 @@ class PaymentController extends Controller
                 }
             }
             Payment::create([
-                'order_id' => $order->id,
+                'reference' => $order->id,
                 'amount' => $amount,
                 'provider' => 'CashOnDelivery',
             ]);
             Order::whereId($order->id)->update([
                 'payed' => true
             ]);
-            OrderController::confirm($order->id);
+            OrderController::confirm($cart->id, $order->id);
             return response()->json(['status' => 200]);
         }
         return response()->json(['status' => 404]);
@@ -50,5 +44,4 @@ class PaymentController extends Controller
 
         return response()->json(500);
     }
->>>>>>> 2cbb7384b421f66802842eb592e720b94e09813d
 }
