@@ -16,30 +16,26 @@ class OrderController extends Controller
 {
     public static function get($order_id){
         if($order = Order::whereId($order_id)->first()){
-            dd($order->items);
-            $cart = [
-                'id' => Cart::get($order->cart_id)->id,
-                'items' => [],
-            ];
-            foreach(Cart::get($order->cart_id)->items as $item){
-                $product = Product::whereId($item->id)->first();
-                array_push($cart['items'], [
+            $items = [];
+            foreach($order->items as $item){
+                $product = Product::whereId($item->product_id)->first();
+                array_push($items, [
                     'id' => $item->id,
                     'name' => $product->name,
                     'description' => $product->short_description,
                     'type' => $product->inventory->digital?'Digital': 'Physical',
                     'unit_price' => $item->unit_price,
                     'quantity' => $item->quantity,
-                    'price' => $item->unit_price * $item->quantity,
                 ]);
             }
             return [
                 'id' => $order->id,
-                'cart' => $cart,
+                'items' => $items,
                 'user' => $order->user_id?User::whereId($order->user_id)->first():null,
-                'payment_method' => $order->payment_method,
+                'payment' => $order->payment,
                 'fullname' => $order->fullname,
                 'address' => $order->address,
+                'email' => $order->email,
                 'phone' => $order->phone,
                 'state' => $order->state,
                 'note' => $order->note,
@@ -110,7 +106,6 @@ class OrderController extends Controller
         if(!count(Cart::get($request['cart_id'])->items)){
             return response()->json(['status' => 500, 'message' => 'Empty cart']);
         }
-        // dd(Product::whereId(1)->first()->inventory->items);
         $order_id = Order::create([
             'user_id' => $user?$user->id:null,
             'cart_id' => $request['cart_id'],
@@ -120,6 +115,16 @@ class OrderController extends Controller
             'address' => $request['address'],
             'note' => $request['note'],
         ])->id;
+        foreach(Cart::get($request['cart_id'])->items as $item){
+            OrderItems::create([
+                'order_id' => $order_id,
+                'product_id' => $item->id,
+                'item_id' => $item->item_id,
+                'quantity' => $item->quantity,
+                'payed' => false,
+            ]);
+            // Cart::removeItem($item->item_id);
+        }
         return response()->json([
             'status' => 200,
             'order_id' => $order_id,
@@ -141,18 +146,13 @@ class OrderController extends Controller
     }
 
     public static function confirm($order_id){
-        $cart = Cart::get($order_id);
         $order = Order::whereId($order_id)->first();
-        dd($cart);
         foreach($order->items as $item){
-            OrderItems::create([
-                'order_id' => $order_id,
-                'product_id' => $item->id,
-                'quantity' => $item->quantity,
+            OrderItems::whereId($item->id)->update([
                 'payed' => true,
             ]);
             Cart::removeItem($item->item_id);
         }
-        return false;
+        return true;
     }
 }

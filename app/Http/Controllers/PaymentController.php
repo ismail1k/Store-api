@@ -22,14 +22,14 @@ class PaymentController extends Controller
                 }
             }
             Payment::create([
-                'reference' => $order->id,
+                'order_id' => $order->id,
                 'amount' => $amount,
                 'provider' => 'CashOnDelivery',
             ]);
             Order::whereId($order->id)->update([
                 'payed' => true
             ]);
-            OrderController::confirm($cart->id, $order->id);
+            OrderController::confirm($order->id);
             return response()->json(['status' => 200]);
         }
         return response()->json(['status' => 404]);
